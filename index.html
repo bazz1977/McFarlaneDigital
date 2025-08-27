@@ -29,9 +29,9 @@
     .pill { background: var(--chip); border: 1px solid var(--chip-line); padding: 4px 10px; border-radius: 999px; font-size: 12px; margin-left: 8px; color: color-mix(in oklab, var(--text), var(--muted) 40%); }
 
     .actions { display:flex; gap:8px; align-items:center; }
-    .lang { width: 36px; height: 36px; border-radius: 10px; background: var(--chip); border:1px solid var(--chip-line); display:grid; place-items:center; cursor:pointer; }
+    .lang { width: 36px; height: 36px; border-radius: 10px; background: var(--chip); border:1px solid var(--chip-line); display:grid; place-items:center; cursor:pointer; position: relative; }
     .lang.active { outline: 2px solid var(--brand); }
-    .theme { width: 36px; height: 36px; border-radius: 10px; display:grid; place-items:center; cursor:pointer; background: var(--chip); border:1px solid var(--chip-line); }
+    .theme { width: 36px; height: 36px; border-radius: 10px; display:grid; place-items:center; cursor:pointer; background: var(--chip); border:1px solid var(--chip-line); position: relative; overflow: hidden; }
 
     .panel { background: var(--panel); border:1px solid var(--line); border-radius: 18px; padding: 14px; margin-top: 18px; }
     .hero { border-radius: 12px; overflow: hidden; height: 300px; background:#0c0f17; display:grid; place-items:center; }
@@ -52,6 +52,113 @@
 
     .note { border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 12px; color: color-mix(in oklab, var(--text), var(--muted) 40%); }
     .footer { opacity:.6; font-size:12px; margin: 16px 0 6px; text-align:right; }
+
+    /* Flag icon sizing */
+    .lang svg { width: 22px; height: 16px; border-radius: 3px; display: block; }
+
+    /* Animaties voor theme toggle */
+    .theme svg { transition: opacity 0.3s ease, transform 0.5s ease; position: absolute; }
+    .theme svg.hidden { opacity: 0; transform: rotate(180deg) scale(0.5); pointer-events: none; }
+    .theme svg.visible { opacity: 1; transform: rotate(0deg) scale(1); }
+  
+/* Animaties voor vlagknoppen */
+.lang {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, outline-color 0.25s ease;
+  will-change: transform;
+}
+.lang:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 8px rgba(127, 90, 240, 0.45);
+}
+.lang:active {
+  transform: scale(0.96);
+}
+.lang.active {
+  outline: 2px solid var(--brand);
+  box-shadow: 0 0 10px rgba(127, 90, 240, 0.55);
+}
+
+  
+/* Animatie voor vlag-buttons */
+.lang {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.lang:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 6px rgba(127,90,240,0.6);
+}
+.lang:active {
+  transform: scale(0.95);
+}
+
+  
+/* Micro-bounce bij taalwissel */
+@keyframes langPop {
+  0% { transform: scale(1); }
+  60% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+.lang.pop {
+  animation: langPop 0.26s ease-out;
+}
+
+  
+/* --- Dutch theme --- */
+[data-theme="dutch"] {
+  --bg: #ff5a00;          /* Dutch Oranje */
+  --panel: #ffffff;
+  --muted: #3b2a1f;
+  --text: #0b0c10;
+  --brand: #ff7a1a;
+  --line: rgba(0,0,0,.12);
+  --chip: #fff3e6;
+  --chip-line: rgba(0,0,0,.12);
+  --btn: #ff7a1a;
+  --btn-hover: #ff8c33;
+}
+/* Speciale Dutch-knop (zwart/wit achtergrond per thema) */
+.theme.dutch { background: var(--panel); border: 1px solid var(--line); }
+.theme.dutch:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 6px 14px rgba(255, 122, 26, 0.35);
+}
+.theme.dutch.active {
+  outline: 2px solid #ffb347;
+  box-shadow: 0 0 0 3px rgba(255, 122, 26, 0.25) inset;
+}
+
+/* Tulip icoon sizing */
+#icon-heart { width: 20px; height: 20px; fill: currentColor; position: absolute; left:8px; top:8px; }
+
+/* Toast styles */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%) translateY(20px);
+  background: color-mix(in oklab, var(--panel), var(--bg) 5%);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 100;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+  
+  
+[data-theme="dark"] .theme.dutch { background: #000; }
+[data-theme="light"] .theme.dutch { background: #fff; }
+
   </style>
 </head>
 <body>
@@ -67,10 +174,56 @@
         </div>
       </div>
       <div class="actions">
-        <div class="lang" data-lang="nl" title="Nederlands">🇳🇱</div>
-        <div class="lang" data-lang="en" title="English">🇬🇧</div>
-        <div class="lang" data-lang="es" title="Español">🇪🇸</div>
-        <button class="theme" id="themeBtn" title="Toggle theme">🌗</button>
+        <div class="lang" data-lang="nl" title="Nederlands">
+          <!-- NL: rood-wit-blauw -->
+          <svg viewBox="0 0 3 2" aria-label="Nederlandse vlag" role="img">
+            <rect width="3" height="0.667" y="0" fill="#AE1C28"/>
+            <rect width="3" height="0.667" y="0.667" fill="#FFFFFF"/>
+            <rect width="3" height="0.667" y="1.333" fill="#21468B"/>
+          </svg>
+        </div>
+        <div class="lang" data-lang="en" title="English">
+          <!-- GB -->
+          <svg viewBox="0 0 60 30" aria-label="British flag" role="img">
+            <clipPath id="c"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+            <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFF" stroke-width="6"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#c)"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#FFF" stroke-width="10"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+          </svg>
+        </div>
+        <div class="lang" data-lang="es" title="Español">
+          <!-- ES -->
+          <svg viewBox="0 0 3 2" aria-label="Bandera de España" role="img">
+            <rect width="3" height="2" fill="#AA151B"/>
+            <rect y="0.5" width="3" height="1" fill="#F1BF00"/>
+          </svg>
+        </div>
+        
+        <button class="theme dutch" id="dutchBtn" title="Activate Dutch theme">
+          <!-- Oranje hart icoon -->
+          <svg id="icon-heart" viewBox="0 0 24 24">
+            <path d="M12 21.35c-0.3-0.18-7.5-4.9-9.7-7.6C0.6 11.2 1.3 6.8 5 6.3c2.1-0.3 3.7 0.8 5 2.2 1.3-1.4 2.9-2.5 5-2.2 3.7 0.5 4.4 4.9 2.7 7.45-2.2 2.7-9.4 7.42-9.7 7.6z" fill="#FFA31A"/></svg>
+        </button>
+<button class="theme" id="themeBtn" title="Toggle theme">
+          <svg id="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="visible" style="left:8px; top:8px;">
+            <circle cx="12" cy="12" r="5"/>
+            <g stroke="currentColor" stroke-width="2" fill="none">
+              <line x1="12" y1="1" x2="12" y2="4"/>
+              <line x1="12" y1="20" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+              <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="4" y2="12"/>
+              <line x1="20" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+              <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+            </g>
+          </svg>
+          <svg id="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="hidden" style="left:8px; top:8px;">
+            <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1012 21a9 9 0 009-8.21z"/>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -78,7 +231,7 @@
   <div class="wrap">
     <section class="panel">
       <div class="hero">
-        <img id="hero" alt="Hero" src="hero.jpg" onerror="this.onerror=null;this.src='toddbatman.jpg';" />
+        <img id="hero" alt="Hero" src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="%230b0c10"/><stop offset="1" stop-color="%23141824"/></linearGradient></defs><rect width="1200" height="600" fill="url(%23g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="40" fill="%239aa4b2">McFarlane Hub • Hero</text></svg>" />
       </div>
 
       <h1 id="t_welcome">Welkom</h1>
@@ -124,7 +277,8 @@ const I18N = {
     wallet_label: "Walletadressen (meerdere toegestaan)",
     wallet_hint: "Meerdere adressen: scheid met komma's of spaties",
     start: "Bekijk mijn collectie ▶",
-    note: "Note: Deze hub toont uitsluitend NFT’s uit de officiële McFarlane/DC/UFC/NBC/POAP contractlijsten op Polygon."
+    note: "Note: Deze hub toont uitsluitend NFT’s uit de officiële McFarlane/DC/UFC/NBC/POAP contractlijsten op Polygon.",
+    unlock_dutch: "Gefeliciteerd! Je hebt het speciale NEDERLANDSE thema ontgrendeld!"
   },
   en: {
     brand: "Unofficial McFarlane Hub",
@@ -136,7 +290,8 @@ const I18N = {
     wallet_label: "Wallet address(es)",
     wallet_hint: "Multiple addresses: separate with commas or spaces",
     start: "View my collection ▶",
-    note: "Note: This hub only shows NFTs from the official McFarlane/DC/UFC/NBC/POAP contract lists on Polygon."
+    note: "Note: This hub only shows NFTs from the official McFarlane/DC/UFC/NBC/POAP contract lists on Polygon.",
+    unlock_dutch: "Congratulations! You\'ve unlocked the special DUTCH theme!"
   },
   es: {
     brand: "Centro no oficial de McFarlane",
@@ -148,7 +303,8 @@ const I18N = {
     wallet_label: "Dirección(es) de wallet",
     wallet_hint: "Varias direcciones: sepáralas con comas o espacios",
     start: "Ver mi colección ▶",
-    note: "Nota: Este hub solo muestra NFTs de las listas oficiales de contratos de McFarlane/DC/UFC/NBC/POAP en Polygon."
+    note: "Nota: Este hub solo muestra NFTs de las listas oficiales de contratos de McFarlane/DC/UFC/NBC/POAP en Polygon.",
+    unlock_dutch: "¡Enhorabuena! ¡Has desbloqueado el tema especial HOLANDÉS!"
   }
 };
 
@@ -168,6 +324,13 @@ function setLang(lang) {
   document.documentElement.lang = lang;
   localStorage.setItem('mcf_lang', lang);
   document.querySelectorAll('.lang').forEach(el => el.classList.toggle('active', el.dataset.lang === lang));
+
+  // Micro-bounce animatie op de actieve vlag
+  const active = document.querySelector('.lang.active');
+  if (active) {
+    active.classList.remove('pop'); void active.offsetWidth; active.classList.add('pop');
+    active.addEventListener('animationend', () => active.classList.remove('pop'), { once: true });
+  }
 }
 
 function initLang() {
@@ -181,7 +344,23 @@ function initLang() {
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('mcf_theme', theme);
+
+  const sun = document.getElementById('icon-sun');
+  const moon = document.getElementById('icon-moon');
+  if (sun && moon) {
+    if (theme === 'dark') {
+      sun.classList.add('hidden');  sun.classList.remove('visible');
+      moon.classList.add('visible'); moon.classList.remove('hidden');
+    } else {
+      sun.classList.add('visible'); sun.classList.remove('hidden');
+      moon.classList.add('hidden');  moon.classList.remove('visible');
+    }
+  }
+
+  const dbtn = document.getElementById('dutchBtn');
+  if (dbtn) dbtn.classList.toggle('active', theme === 'dutch');
 }
+
 function toggleTheme() {
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
   setTheme(cur === 'dark' ? 'light' : 'dark');
@@ -206,6 +385,40 @@ function go() {
   window.open(url.toString(), '_blank');
 }
 
+
+function loadHeroImage() {
+  const heroEl = document.getElementById('hero');
+  const candidates = ['hero.jpg','toddbatman.jpg'];
+  let i = 0;
+  const tryNext = () => {
+    if (i >= candidates.length) return;
+    const test = new Image();
+    test.onload = () => { heroEl.src = candidates[i]; };
+    test.onerror = () => { i += 1; tryNext(); };
+    test.src = candidates[i];
+  };
+  tryNext();
+}
+
+
+function showToast(msg, ms) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), ms || 6000);
+}
+function activateDutch() {
+  const wasDutch = (document.documentElement.getAttribute('data-theme') === 'dutch');
+  setTheme('dutch');
+  if (!wasDutch) {
+    const lang = (localStorage.getItem('mcf_lang') || document.documentElement.lang || 'nl');
+    const msg = (I18N[lang] && I18N[lang].unlock_dutch) ? I18N[lang].unlock_dutch : I18N.en.unlock_dutch;
+    showToast(msg, 6000);
+  }
+}
+
 function boot() {
   const apiInput = document.getElementById('apiKey');
   const ownersInput = document.getElementById('owners');
@@ -214,16 +427,18 @@ function boot() {
 
   document.querySelectorAll('.lang').forEach(el => el.addEventListener('click', () => setLang(el.dataset.lang)));
   initLang();
-
+  
   const savedTheme = localStorage.getItem('mcf_theme') || 'dark';
   setTheme(savedTheme);
   document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+  const dbtn = document.getElementById('dutchBtn'); if (dbtn) dbtn.addEventListener('click', activateDutch);
 
   document.getElementById('startBtn').addEventListener('click', go);
   ownersInput.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
 }
 
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener('DOMContentLoaded', () => { boot(); loadHeroImage(); });
 </script>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
