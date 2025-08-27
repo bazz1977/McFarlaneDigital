@@ -113,6 +113,17 @@
     .planner .slot.missing { cursor: pointer; }
     .planner .slot.missing:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
+  
+    /* Craft reward card */
+    .reward { margin-top: 10px; }
+    .reward-card { display:flex; align-items:center; gap:12px; background:#121827; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .reward-card img { width:56px; height:56px; border-radius:10px; border:1px solid var(--line); object-fit:cover; }
+    .reward-meta { display:flex; flex-direction:column; gap:2px; }
+    .reward-title { font-size:12px; color: var(--muted); }
+    .reward-name { font-weight:700; }
+    .reward-contract { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:12px; opacity:.8; }
+    .reward-card a { text-decoration: none; }
+
   </style>
 </head>
 <body>
@@ -197,7 +208,7 @@
         <div class="help muted" id="setupHelp">Deze gegevens worden lokaal opgeslagen op dit apparaat.</div>
       </div>
 
-      <div class="fig-grid" id="figGrid"></div>
+      <div class="reward" id="craftReward" style="display:none;">  <a id="rewardLink" href="#" target="_blank" rel="noopener noreferrer" class="reward-card">    <img id="rewardImg" alt="Craft reward" />    <div class="reward-meta">      <div class="reward-title" id="t_rewardTitle">Craft reward</div>      <div class="reward-name" id="rewardName"></div>      <div class="reward-contract"><code id="rewardContract"></code></div>    </div>  </a></div><div class="fig-grid" id="figGrid"></div>
 
       <div class="planner" id="planner" style="display:none;">
         <div class="toolbar">
@@ -217,9 +228,9 @@
 
 <script>
 var I18N = {
-  nl: {title:"Waves",desc:"Kies een wave om je bezit te zien. We stellen automatisch de beste combinaties samen zonder dubbelgebruik.",craftable:"Mogelijke combinaties",empty:"Nog geen items in deze figuur.",wave:"Wave",inWallet:"in wallet",note:"Let op: craften kan als je binnen één wave elk figuur minimaal 1× bezit. Elke NFT kan maar één keer gebruikt worden."},
-  en: {title:"Waves",desc:"Pick a wave to view holdings. We automatically build the best non-overlapping combinations.",craftable:"Possible combos",empty:"No items yet for this figure.",wave:"Wave",inWallet:"in wallet",note:"Heads up: you can craft when you hold at least 1 of each figure in a wave. Each NFT can only be used once."},
-  es: {title:"Waves",desc:"Elige una wave para ver tus posesiones. Creamos automáticamente las mejores combinaciones sin reutilizar.",craftable:"Combinaciones posibles",empty:"Aún no hay items para esta figura.",wave:"Wave",inWallet:"en wallet",note:"Aviso: puedes craftear si tienes al menos 1 de cada figura en una wave. Cada NFT solo puede usarse una vez."}
+  nl: {title:"Waves",desc:"Kies een wave om je bezit te zien. We stellen automatisch de beste combinaties samen zonder dubbelgebruik.",craftable:"Mogelijke combinaties",empty:"Nog geen items in deze figuur.",wave:"Wave",inWallet:"in wallet",note:"Let op: craften kan als je binnen één wave elk figuur minimaal 1× bezit. Elke NFT kan maar één keer gebruikt worden.",rewardTitle:"Craft beloning"},
+  en: {title:"Waves",desc:"Pick a wave to view holdings. We automatically build the best non-overlapping combinations.",craftable:"Possible combos",empty:"No items yet for this figure.",wave:"Wave",inWallet:"in wallet",note:"Heads up: you can craft when you hold at least 1 of each figure in a wave. Each NFT can only be used once.",rewardTitle:"Craft reward"},
+  es: {title:"Waves",desc:"Elige una wave para ver tus posesiones. Creamos automáticamente las mejores combinaciones sin reutilizar.",craftable:"Combinaciones posibles",empty:"Aún no hay items para esta figura.",wave:"Wave",inWallet:"en wallet",note:"Aviso: puedes craftear si tienes al menos 1 de cada figura en una wave. Cada NFT solo puede usarse una vez.",rewardTitle:"Recompensa de crafteo"}
 };
 
 var WAVES = [
@@ -250,6 +261,12 @@ var WAVES = [
     { name:"Monarch",                     contract:"0x55e79461a5accca44f9a4744fe3215d593c79218" }
   ]}
 ];
+
+
+var CRAFT_REWARD = {
+  1: { name: "Mongul - Build-A-Figure", contract: "0x19f5dd4d1315adfcda911dbb811f9f1d129cf6ca" },
+  2: { name: "Animal Man - Build-A-Figure", contract: "0xe3ae4e46917540b7760bf7702be2f2c503f9bc4b" }
+};
 
 var FIGURE_CONTRACTS = (function(){ 
   var a=[], i,j; 
@@ -284,6 +301,7 @@ function setLang(lang) {
   document.getElementById('t_desc').textContent = t.desc;
   document.getElementById('t_craftable').textContent = t.craftable;
   document.getElementById('t_note').textContent = t.note;
+  var rt=document.getElementById('t_rewardTitle'); if(rt) rt.textContent = t.rewardTitle || 'Craft reward';
   document.documentElement.lang = lang; localStorage.setItem('mcf_lang', lang);
   var langs=document.querySelectorAll('.lang'); for (var i=0;i<langs.length;i++){ var el=langs[i]; el.classList.toggle('active', el.getAttribute('data-lang')===lang); }
   renderWaveChips(); renderCurrentWave();
@@ -407,6 +425,53 @@ function buildCombosForWave(wave, figMap, max){
   return combos;
 }
 
+
+
+function fetchRewardImage(contract, apiKey, onOk, onErr){
+  var base = "https://api.rarible.org/v0.1";
+  var id = "POLYGON:" + String(contract).toLowerCase();
+  var attempts = [
+    base + "/collections/" + encodeURIComponent(id),
+    base + "/items/byCollection?collection=" + encodeURIComponent(id) + "&size=1"
+  ];
+  var i = 0;
+  function tryNext(){
+    if (i >= attempts.length) { if (onErr) onErr(new Error("No image found")); return; }
+    var url = attempts[i++];
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    if (apiKey) xhr.setRequestHeader("X-API-KEY", apiKey);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.onreadystatechange = function(){
+      if (xhr.readyState === 4){
+        if (xhr.status>=200 && xhr.status<300){
+          try {
+            var data = JSON.parse(xhr.responseText);
+            var img = null;
+            var coll = data && (data.collection || data);
+            if (coll && coll.meta) {
+              if (coll.meta.content && coll.meta.content[0] && coll.meta.content[0].url) img = coll.meta.content[0].url;
+              if (!img && coll.meta.image && coll.meta.image.url) img = coll.meta.image.url;
+            }
+            if (!img && data && data.items && data.items.length){
+              var it = data.items[0];
+              if (it && it.meta) {
+                if (it.meta.content && it.meta.content[0] && it.meta.content[0].url) img = it.meta.content[0].url;
+                else if (it.meta.image && it.meta.image.url) img = it.meta.image.url;
+              }
+            }
+            if (img) { onOk(img); } else { tryNext(); }
+          } catch(e){ tryNext(); }
+        } else {
+          tryNext();
+        }
+      }
+    };
+    xhr.send();
+  }
+  tryNext();
+}
+
 var CURRENT_WAVE = 1;
 var OWNED = [];
 var INDEX = new Map();
@@ -459,6 +524,27 @@ function renderCurrentWave() {
   for (var c=1;c<counts.length;c++){ if (counts[c] < kmin) kmin = counts[c]; }
   var badge = document.getElementById('waveBadge'+w.id);
   if (badge) badge.textContent = tkey('craftable')+': '+kmin;
+
+  // Reward card (if defined for this wave)
+  var rewardBox = document.getElementById('craftReward');
+  var r = CRAFT_REWARD[ w.id ];
+  if (r) {
+    rewardBox.style.display = 'block';
+    var link = document.getElementById('rewardLink');
+    var img = document.getElementById('rewardImg');
+    var nameEl = document.getElementById('rewardName');
+    var contractEl = document.getElementById('rewardContract');
+    link.href = "https://rarible.com/collection/polygon/" + r.contract;
+    img.src = ""; img.alt = r.name;
+    var __api = window.RARIBLE_API_KEY || localStorage.getItem('rarible_api_key') || "";
+    if (__api) fetchRewardImage(r.contract, __api, function(u){ img.src = u; }, function(){});
+    nameEl.textContent = r.name;
+    contractEl.textContent = r.contract;
+    var rt=document.getElementById('t_rewardTitle'); if(rt) rt.textContent = tkey('rewardTitle');
+  } else {
+    rewardBox.style.display = 'none';
+  }
+
   renderPlanner(w, kmin);
 }
 
@@ -543,11 +629,25 @@ function renderSetup(show, apiKeyVal, ownersVal) {
 }
 
 async function boot() {
+  // Re-bind language flags
+  var langs = document.querySelectorAll('.lang');
+  for (var i=0;i<langs.length;i++){
+    (function(el){
+      el.addEventListener('click', function(){ setLang(el.getAttribute('data-lang')); });
+    })(langs[i]);
+  }
+  // Theme boot + toggle
+  var savedTheme = localStorage.getItem('mcf_theme') || 'dark';
+  setTheme(savedTheme);
+  var tb = document.getElementById('themeBtn');
+  if (tb) tb.addEventListener('click', toggleTheme);
+
   document.getElementById('exportCSV').addEventListener('click', exportCombosCSV);
   initLang();
 
   var urlObj = new URL(location.href);
   var apiKey = urlObj.searchParams.get('api') || localStorage.getItem('rarible_api_key') || "";
+  window.RARIBLE_API_KEY = apiKey;
   var ownersParam = urlObj.searchParams.get('owners') || localStorage.getItem('mcf_owners') || "";
   var owners = parseOwnersText(ownersParam).length ? parseOwnersText(ownersParam) : ownersParam.split(',').map(function(s){return s.trim();}).filter(function(Boolean){return Boolean;});
 
