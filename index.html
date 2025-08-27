@@ -82,7 +82,7 @@
       </div>
 
       <h1 id="t_welcome">Welkom</h1>
-      <div class="muted" id="t_intro">Whitelisted NFT's op Polygon.</div>
+      <div class="muted" id="t_intro">Bekijk McFarlane‑NFT’s, XP en sets op Polygon.</div>
 
       <div class="form">
         <div class="grid">
@@ -97,12 +97,12 @@
             <div class="help" id="t_wallet_hint">Meerdere adressen: scheid met komma's of spaties</div>
           </div>
           <div class="field" style="display:grid; align-content:end;">
-            <button class="start" id="startBtn">Start ▶</button>
+            <button class="start" id="startBtn">Bekijk mijn collectie ▶</button>
           </div>
         </div>
       </div>
 
-      <div class="note" id="t_note">Let op: deze site toont alleen NFT's uit de ingebouwde McFarlane/DC/UFC/NBC/POAP contractlijsten op Polygon.</div>
+      <div class="note" id="t_note">Note: Deze hub toont uitsluitend NFT’s uit de officiële McFarlane/DC/UFC/NBC/POAP contractlijsten op Polygon.</div>
       <div class="footer">Build: v1.9.7</div>
     </section>
   </div>
@@ -112,181 +112,43 @@ const APP_VERSION = "v1.9.7";
 const BUILD_TAG = "v1.9.7-20250826-090443";
 const DEFAULT_API_KEY = "2fb8e74e-c0b4-49c9-abf3-b51699242e7a";
 const DEFAULT_OWNERS = "0x5EF7dBE5A7f4a7b3Ae7C45F35EAaf29b2bb1a5D4";
-const CONTRACTS = [
-  "0x0039650dc457f9b5002112fe1ee4c7895f5c14e2",
-  "0x00c0461804ffcca9db1bc9ffdb5050631f57c8e8",
-  "0x01d55cc5854d26af65dd7f4bcb0da44b76ac23e1",
-  "0x028ab77ff9794d2b02f11f77a01c7c2f96618916",
-  "0x02994090747138a15361560f943cc5fbfcff256d",
-  "0x049474b730f15d863e4b87c352fae7d5acc1197f",
-  "0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2",
-  "0x06780a1388a4c8c06267e3b2b881539bd652f2a8",
-  "0x0866e58f7faaa78b7bf709398c131586cedf0833",
-  "0x08d13b81502280b3e3b0ca09af7355fc55da24d5",
-  "0x0fd66c55e5861129376f207b59d71aacb1b0cc4f",
-  "0x10cddef1c416f3462b4f6a8ad7255adc1350339d",
-  "0x125ca8cfece0a950dd33cc7c9d4e132f72dc545a",
-  "0x186b4d896d3be406ba4868541f866eb58ad6373e",
-  "0x199d31c147a965ae1c2f899b5d6fa83b39e88cd8",
-  "0x19b2dfff394cac6bec13f1ab00723763c5b9b659",
-  "0x19f5dd4d1315adfcda911dbb811f9f1d129cf6ca",
-  "0x1a1ffebb38d7763d897c7f265c1afe48b41843b6",
-  "0x1b15a670992d7b2475ed9578ef962bdc22f753a6",
-  "0x1b79f3d95d9b449dd6a38d03cfa05f105a7b5457",
-  "0x227af9b628d578486a6d0f69b36d1de2d0ca900b",
-  "0x229f58f93d2607c54d0abcf899c807f1f3b40ab8",
-  "0x240a1d938d78c76ad8af1ce080858614da311636",
-  "0x2595b68c39f9f42f6d533f85fca4cdc6fff29a09",
-  "0x2879c5b410b82b4fb5e87d9527d3c2017fae0ff8",
-  "0x29dfefe0aecc0bc7e352f7776fc77b8a39b1155e",
-  "0x2aa7a00fdf555411882bc7802fcdda457942f797",
-  "0x2b3d922b71d5bb1d745859f8c2cfa00951bd382a",
-  "0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3",
-  "0x34b4f2c74541d370907cf8bd642a62cc8155ecf3",
-  "0x355879b619c53f4bc67c9778d4f1e4cc44c484a4",
-  "0x35b07bce9421e5d19b59a966aaf03e22b240d4d0",
-  "0x3818f05d6e3202848c073c76f5cb202c1d2c55f8",
-  "0x38abd666964fdbb32851cea3df7322facb246eac",
-  "0x398acb7ea6a9602a57d3eaec89588923b5235bc5",
-  "0x3ca89fcea0934efaadf2381906ca1cb004f8989d",
-  "0x3e7247dadddaab9917d5acc226e7aede855346ae",
-  "0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1",
-  "0x405147e7a29f275187be2b9674ffe7b455075235",
-  "0x416e40a2a56b89ade4374f48b491df7752daef1e",
-  "0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e",
-  "0x43248fc0a82b96ee59f9a10d8eabbde700b006f9",
-  "0x440de7e698321293111aa106ca05a613e6651366",
-  "0x44637ccc451be5e60183207596f722ce64b1fb7e",
-  "0x4867349931a547c47e3f4b4dffe7afa5c59b6174",
-  "0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f",
-  "0x49e85cf230477fbb438d6b800e8b4d9260a34f06",
-  "0x4a24d3cc908f3eb85fb30a0418c1b2f04cb0331e",
-  "0x4a73767ee7ef0fcda73dd194a37eb8fec1fa8240",
-  "0x4bdaf58712cf8c69fe619f32f373d541ea87a51a",
-  "0x4e4c5fcc39f6ff90a6e1862b354703c683bd07c5",
-  "0x503ccea5984975f057ce957a1cdca61dbd731405",
-  "0x5051775029610e48d325e65d6c5d56fe607bcc0d",
-  "0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c",
-  "0x50ed79948a280f38d11b5134295fb8064778cdbf",
-  "0x53247d58b7e1731a730773f5370f712867a22b5f",
-  "0x53be625557a2d9453bfefe9fe569984946eb7e8c",
-  "0x53c3d1b90b14044dee9f6cb1df602544b8f154a8",
-  "0x55e79461a5accca44f9a4744fe3215d593c79218",
-  "0x5604d1e3fa0347c652d27ae3091075b561a53699",
-  "0x5847dd7002f1874bf55dd8c1db95b0bbfea84a08",
-  "0x5beeee0a5630f90628cdf36d806ea06c9053b19c",
-  "0x5d666f215a85b87cb042d59662a7ecd2c8cc44e6",
-  "0x5f075c762e276a6527846427e66c75e89ef30091",
-  "0x636045ab763b493a80350bfbd08e038029056ae2",
-  "0x6514a84948e5a26f3fa34090c66b7dd687283f8d",
-  "0x651879523e831763519ab8df1d8cd6fa8c4c9937",
-  "0x6631a60056f02aa68015557ffbbc683d78987e79",
-  "0x66c207a6075075cf033973fb2fc0b469c1e20d1d",
-  "0x66fc5b74aa52565d62ada7f15cbe042a4999e22e",
-  "0x6803e9e8c9cbb318ecb97c505318fb500313043b",
-  "0x681f695eb7659d26b95f5ea3197e348af81450e8",
-  "0x6b2c6f1dec14f00d14d6f8f56dd52e2edabeffff",
-  "0x6b75497bd0a94b03353c69cd93317e2a3b9ac803",
-  "0x6dc606389aa3532ae50b4af4066ca8bfc984f964",
-  "0x7180b24b73495968acd96f700f0860599a75dc9e",
-  "0x727ae2af1a3f57f218e749ba4a041fee42483f76",
-  "0x79f1437646c048815a4187f598b877595f184592",
-  "0x7a768033aae19e13345686618bdcbf735e9b9a74",
-  "0x7cb3de1557bad446c25edb6fb519f2f186ed1589",
-  "0x81dc41d9c1c3b515dc367430497397b3e162ad2c",
-  "0x8732dbd44da56c7a4694bdecbc9dae4436c9b284",
-  "0x89696ef507b55741dc311733b7658fba5c8eea91",
-  "0x89ed4239d327856e31ae5194006a7c99e53babf3",
-  "0x8bc163742f67a4ceba6babcce6f3610b7927ce0a",
-  "0x8bcb47ba475fd7d52975a5c660750ad5e60a6281",
-  "0x8bd04639547c44d8832b0cd810415f66f4e3d4a4",
-  "0x98cbf6d430f1038ecbcc847dda4ea54ace8290a9",
-  "0x9924b923641deb3a1de544746317dec501347d41",
-  "0x9a4767252f3b40929bc579a9c6f3d140c0901af2",
-  "0x9c3d258be359b70b9c3fc0fece97cfb172c3fa13",
-  "0x9e3a3be28247fd1d583d812dbd52dcbb6cee63eb",
-  "0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3",
-  "0xa26a919550dc30e4122947b531caa9ff1d56378f",
-  "0xa2eab97f61ff1ec6e9708363e9111a7806118ae7",
-  "0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f",
-  "0xa85de5ed02b2d3c8130bdcd22605d0f1b44636ca",
-  "0xaa1d4c0eab9e4152890abb71fab015e23905e491",
-  "0xab575d5961a4929386288ccb4cd6ff88cdf253d2",
-  "0xaf37e249b74b2cf57bfa1ab6cdfa88248e821cb7",
-  "0xb0615c506fc5c7e11057a5d591e02d9d8b8f7c6a",
-  "0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef",
-  "0xb78aef31e52e7c2ac55bfa87117372ed06b8f067",
-  "0xb817501dbcdc39c87d7afab91f41eb3608f312be",
-  "0xb8a7187428235f26a9f43dea17126737cb925511",
-  "0xc059bb266f825e2c29c860689ee5ed9597ab0bbd",
-  "0xc0e360dae3bdcb967b16806a14e9621ece8b479a",
-  "0xc350f54d2d41e559e6ef0c178e303165367b033b",
-  "0xc50692526a8c2c2798a8434dd620616b26ec6d37",
-  "0xcbb05c528969a6afe1a4c0fd6a08280fd3bd46a2",
-  "0xcbf934975f8ec0fe153964441ee78bad752fadbe",
-  "0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21",
-  "0xcdce27f3e506dab51ac1966b73000962375b61a3",
-  "0xce15655e447667e0a5d90e4e022624f86cd53667",
-  "0xd03c73c8f3e8c7e7957b43df402ecb7640d89f62",
-  "0xd42dd7a255a7c3067ab57f66484bd65287fb6de8",
-  "0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05",
-  "0xdaca3b923d445d727ecb617608bcc7ff1b04ec7f",
-  "0xdafe23a9ec510976cd8a49ad74d098cadc01caa2",
-  "0xdd3b6a3e138c9ff9cbb288477868a66b33a5242b",
-  "0xe012c6e6a160fdf15787d7a1b7a589486dde080e",
-  "0xe1b1dc89e99f3f1e846e23a3cc3a09eb20a103e1",
-  "0xe37eabab0a20590626997305ccc1e3d7b5ba4db3",
-  "0xe3ae4e46917540b7760bf7702be2f2c503f9bc4b",
-  "0xe3c14a10f4398653569ab8eb2f86070565e22206",
-  "0xe903dbd81d8ed1286c5f03720706920929564924",
-  "0xea4228d68438a21bea9c28e2a20f47666e8087cc",
-  "0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9",
-  "0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346",
-  "0xf53358fba52b6bd19d0b25f29e727c419f0ee9ea",
-  "0xf5f164771bfd542aa608141922a91383f7196992",
-  "0xf7c84f9e98e1143eb6a8d181d1359cce273c575a",
-  "0xfb56b2ce3bd8722952b2ef9d0e9dfcb8bc1c9eaa",
-  "0xfcc2919a153785d8b0181b05212d54eb5b313a3e",
-  "0xffb78df85abd8b570e4143b7b0c63c29d7e70829",
-  "0xffe8af9c1b48dc4f71c37c0d0fe1db429bbeeaee"
-];
 
 const I18N = {
   nl: {
     brand: "Unofficial McFarlane Hub",
     subtitle: "Polygon collectibles viewer • XP & Sets",
     welcome: "Welkom",
-    intro: "Whitelisted NFT's op Polygon.",
+    intro: "Bekijk McFarlane‑NFT’s, XP en sets op Polygon.",
     api_label: "Rarible API-sleutel",
     api_hint: "Wordt lokaal opgeslagen (alleen op dit apparaat)",
     wallet_label: "Walletadressen (meerdere toegestaan)",
     wallet_hint: "Meerdere adressen: scheid met komma's of spaties",
-    start: "Start ▶",
-    note: "Let op: deze site toont alleen NFT's uit de ingebouwde McFarlane/DC/UFC/NBC/POAP contractlijsten op Polygon."
+    start: "Bekijk mijn collectie ▶",
+    note: "Note: Deze hub toont uitsluitend NFT’s uit de officiële McFarlane/DC/UFC/NBC/POAP contractlijsten op Polygon."
   },
   en: {
     brand: "Unofficial McFarlane Hub",
     subtitle: "Polygon collectibles viewer • XP & Sets",
     welcome: "Welcome",
-    intro: "Whitelisted NFTs on Polygon.",
+    intro: "View your McFarlane NFTs, daily XP, and sets on Polygon.",
     api_label: "Rarible API key",
     api_hint: "Stored locally (on this device only)",
-    wallet_label: "Wallet addresses (multiple allowed)",
+    wallet_label: "Wallet address(es)",
     wallet_hint: "Multiple addresses: separate with commas or spaces",
-    start: "Start ▶",
-    note: "Heads up: this site only shows NFTs from the built‑in McFarlane/DC/UFC/NBC/POAP contract lists on Polygon."
+    start: "View my collection ▶",
+    note: "Note: This hub only shows NFTs from the official McFarlane/DC/UFC/NBC/POAP contract lists on Polygon."
   },
   es: {
-    brand: "Centro de no oficial de McFarlane",
-    subtitle: "Visor de coleccionables en Polygon • XP y Sets",
+    brand: "Centro no oficial de McFarlane",
+    subtitle: "Visor de coleccionables en Polygon • XP y sets",
     welcome: "Bienvenido",
-    intro: "NFTs en lista blanca en Polygon.",
+    intro: "Consulta tus NFTs de McFarlane, XP diaria y sets en Polygon.",
     api_label: "Clave de API de Rarible",
     api_hint: "Se guarda localmente (solo en este dispositivo)",
-    wallet_label: "Direcciones de wallet (se permiten varias)",
+    wallet_label: "Dirección(es) de wallet",
     wallet_hint: "Varias direcciones: sepáralas con comas o espacios",
-    start: "Iniciar ▶",
-    note: "Aviso: este sitio solo muestra NFTs de las listas de contratos integradas de McFarlane/DC/UFC/NBC/POAP en Polygon."
+    start: "Ver mi colección ▶",
+    note: "Nota: Este hub solo muestra NFTs de las listas oficiales de contratos de McFarlane/DC/UFC/NBC/POAP en Polygon."
   }
 };
 
