@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="nl" data-app-version="v1.9.7">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unofficial McFarlane Hub – Waves (Marked Final)</title>
+  <style>
+    :root {
+      --bg: #0b0c10; --panel: #0f1117; --muted: #9aa4b2; --text: #e8ecf1; --brand: #7f5af0;
+      --line: rgba(255,255,255,.08); --chip: #141824; --chip-line: rgba(255,255,255,.12);
+      --btn: #5161f5; --btn-hover: #5f6efd;
+      --control-h: 44px;
+      /* complete/incomplete palette */
+      --ok-bg: rgba(46, 204, 113, 0.18);
+      --ok-outline: rgba(46, 204, 113, 0.32);
+      --warn-slot-bg: rgba(255, 82, 82, 0.18);
+      --warn-slot-border: rgba(255, 82, 82, 0.38);
+      --warn-missing-bg: rgba(255, 82, 82, 0.28);
+      --warn-missing-fg: rgba(255, 82, 82, 0.95);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+    [data-theme="light"] {
+      --bg: #f6f7fb; --panel: #ffffff; --muted: #5c6675; --text: #0b0c10; --brand: #6a4df4;
+      --line: rgba(0,0,0,.08); --chip: #f0f2f7; --chip-line: rgba(0,0,0,.1);
+      --btn: #4455f5; --btn-hover: #5262ff;
+      --ok-bg: rgba(46, 204, 113, 0.2);
+      --ok-outline: rgba(46, 204, 113, 0.4);
+      --warn-slot-bg: rgba(214, 57, 57, 0.15);
+      --warn-slot-border: rgba(214, 57, 57, 0.35);
+      --warn-missing-bg: rgba(214, 57, 57, 0.25);
+      --warn-missing-fg: rgba(214, 57, 57, 0.95);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); transition: background .2s ease, color .2s ease; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 14px; }
+
+    .topbar { position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,.2); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .topbar .row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight: 700; }
+    .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); display:inline-block; }
+    .subtitle { color: var(--muted); font-size: 14px; }
+    .pill { background: var(--chip); border: 1px solid var(--chip-line); padding: 4px 10px; border-radius: 999px; font-size: 12px; margin-left: 8px; color: #c8cfda; }
+
+    .actions { display:flex; gap:8px; align-items:center; }
+    .lang, .theme { width: 36px; height: 36px; border-radius: 10px; background: var(--chip); border:1px solid var(--chip-line); display:grid; place-items:center; cursor:pointer; position: relative; }
+    .lang.active { outline: 2px solid var(--brand); }
+    .theme { overflow: hidden; }
+    .lang svg { width: 22px; height: 16px; border-radius: 3px; display: block; }
+    .theme svg { transition: opacity 0.3s ease, transform 0.5s ease; position: absolute; }
+    .theme svg.hidden { opacity: 0; transform: rotate(180deg) scale(0.5); pointer-events: none; }
+    .theme svg.visible { opacity: 1; transform: rotate(0deg) scale(1); }
+
+    .panel { background: var(--panel); border:1px solid var(--line); border-radius: 18px; padding: 14px; margin-top: 18px; }
+
+    h1 { font-size: 28px; margin: 14px 0 6px; }
+    .muted { color: var(--muted); }
+
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 6px; }
+    .chip { background: var(--chip); border:1px solid var(--chip-line); border-radius:999px; padding: 8px 12px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+    .chip:hover { transform: translateY(-1px); }
+    .chip.active { outline:2px solid var(--brand); }
+    .chip .badge { font-size:12px; color: var(--muted); background: #182033; border:1px solid var(--chip-line); padding:2px 8px; border-radius:999px; }
+
+    .fig-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin-top: 10px; }
+    @media (max-width: 900px) { .fig-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 520px) { .fig-grid { grid-template-columns: 1fr; } }
+    .fig-card { background: #10141e; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .fig-card h3 { margin:0 0 4px; font-size:16px; }
+    .fig-meta { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); }
+    .count { font-weight:700; color: var(--text); }
+    .gallery { display:flex; gap:6px; margin-top:8px; overflow:auto; }
+    .thumb { width:46px; height:46px; border-radius:8px; background:#111; border:1px solid var(--line); overflow:hidden; display:grid; place-items:center; }
+    .thumb img { width:100%; height:100%; object-fit:cover; }
+    .empty { opacity:.6; font-size:12px; color:var(--muted); margin-top:8px; }
+
+    .planner { margin-top: 14px; background: #121827; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .planner .row { display:grid; gap:10px; align-items:center; padding:6px; border-radius:12px; }
+    .planner .hdr { font-size:12px; color:var(--muted); margin-bottom:6px; display:grid; gap:10px; }
+    .planner .slot { min-height:54px; border:1px dashed var(--line); border-radius:10px; display:flex; align-items:center; gap:10px; padding:6px; overflow:hidden; }
+    .planner .slot img { width:42px; height:42px; border-radius:8px; object-fit:cover; border:1px solid var(--line); }
+    .planner .slot .meta { font-size:12px; color:var(--muted); }
+    .planner .k { width: 26px; height:26px; border-radius:6px; display:grid; place-items:center; background: var(--chip); border:1px solid var(--chip-line); font-weight:700; }
+
+    /* Missing/complete styling (strong & theme-aware) */
+    .planner .slot.missing { justify-content:center; font-weight:700; background: var(--warn-missing-bg); border-color: var(--warn-slot-border); }
+    .planner .row.complete { background: var(--ok-bg); outline: 1px solid var(--ok-outline); }
+
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
+    .btn { padding:8px 12px; border-radius:10px; border:1px solid var(--line); background: var(--btn); color:white; font-weight:700; cursor:pointer; }
+    .btn.alt { background: #0f1422; color: var(--text); }
+    .btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    select { height: var(--control-h); padding: 8px 10px; border-radius:10px; border:1px solid var(--line); background: #0f1422; color: var(--text); }
+
+    .setup { background: #121827; border:1px solid var(--line); border-radius:14px; padding:12px; margin-top:10px; }
+    .setup-row { display:grid; grid-template-columns: 1fr 1fr auto; gap:10px; align-items:end; }
+    .input { width: 100%; padding: 12px 12px; border-radius: 12px; background: #0d1120; border:1px solid #1b2135; color:var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    [data-theme="light"] .input { background: #f6f8ff; border-color: #e5e8f4; color:#0b0c10; }
+    .help { font-size: 12px; margin-top: 6px; }
+
+    .note { border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 12px; color: #bfc7d6; }
+    .footer { opacity:.6; font-size:12px; margin: 16px 0 6px; text-align:right; }
+
+    .toast { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%) translateY(20px);
+      background: #121827; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px;
+      font-size: 14px; box-shadow: 0 10px 24px rgba(0,0,0,.18); opacity: 0; pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease; z-index: 100; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+      .planner .slot.missing::after { content:'✕'; font-size:22px; color: var(--warn-missing-fg); }
+  
+    /* Cleaner planner visuals: no green rows; only missing slots are red */
+    .planner .row.complete { background: transparent; outline: none; }
+    .planner .slot.missing { cursor: pointer; }
+    .planner .slot.missing:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap row">
+      <div>
+        <div class="brand">
+          <span class="dot"></span>
+          <div>
+            <div id="t_brand">Unofficial McFarlane Hub</div>
+            <div class="subtitle"><span id="t_subtitle">Polygon collectibles viewer • XP & Sets</span> <span class="pill">Polygon</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="lang" data-lang="nl" title="Nederlands">
+          <svg viewBox="0 0 3 2" aria-label="Nederlandse vlag" role="img">
+            <rect width="3" height="0.667" y="0" fill="#AE1C28"/>
+            <rect width="3" height="0.667" y="0.667" fill="#FFFFFF"/>
+            <rect width="3" height="0.667" y="1.333" fill="#21468B"/>
+          </svg>
+        </div>
+        <div class="lang" data-lang="en" title="English">
+          <svg viewBox="0 0 60 30" aria-label="British flag" role="img">
+            <clipPath id="c"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+            <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFF" stroke-width="6"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#c)"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#FFF" stroke-width="10"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+          </svg>
+        </div>
+        <div class="lang" data-lang="es" title="Español">
+          <svg viewBox="0 0 3 2" aria-label="Bandera de España" role="img">
+            <rect width="3" height="2" fill="#AA151B"/>
+            <rect y="0.5" width="3" height="1" fill="#F1BF00"/>
+          </svg>
+        </div>
+        <button class="theme" id="themeBtn" title="Toggle theme">
+          <svg id="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="visible" style="left:8px; top:8px;">
+            <circle cx="12" cy="12" r="5"/>
+            <g stroke="currentColor" stroke-width="2" fill="none">
+              <line x1="12" y1="1" x2="12" y2="4"/>
+              <line x1="12" y1="20" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+              <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="4" y2="12"/>
+              <line x1="20" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+              <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+            </g>
+          </svg>
+          <svg id="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="hidden" style="left:8px; top:8px;">
+            <path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1012 21a9 9 0 009-8.21z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="panel">
+      <h1 id="t_title">Waves</h1>
+      <div class="muted" id="t_desc">Kies een wave om je bezit te zien. We stellen automatisch de beste combinaties samen zonder dubbelgebruik.</div>
+
+      <div class="chips" id="waveChips"></div>
+
+      <div id="setup" class="setup" style="display:none;">
+        <div class="setup-row">
+          <div>
+            <label for="apiKey" class="muted">Rarible API‑key</label>
+            <input id="apiKey" class="input" placeholder="API‑key" />
+          </div>
+          <div>
+            <label for="owners" class="muted">Walletadressen</label>
+            <input id="owners" class="input" placeholder="0x… (meerdere gescheiden met komma's of spaties)" />
+          </div>
+          <div>
+            <button class="btn" id="saveSetup">Opslaan</button>
+          </div>
+        </div>
+        <div class="help muted" id="setupHelp">Deze gegevens worden lokaal opgeslagen op dit apparaat.</div>
+      </div>
+
+      <div class="fig-grid" id="figGrid"></div>
+
+      <div class="planner" id="planner" style="display:none;">
+        <div class="toolbar">
+          <div id="plannerBadge" class="chip"><span id="t_craftable">Mogelijke combinaties</span>: <b id="craftableCount">0</b></div>
+          <button class="btn alt" id="exportCSV">CSV</button>
+        </div>
+        <div class="hdr" id="plannerHdr"></div>
+        <div id="plannerRows"></div>
+      </div>
+
+      <div class="note" id="t_note">Let op: craften kan als je binnen één wave elk figuur minimaal 1× bezit. Elke NFT kan maar één keer gebruikt worden.</div>
+      <div class="footer">Build: v1.9.7 • Waves (Marked Final)</div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+var I18N = {
+  nl: {title:"Waves",desc:"Kies een wave om je bezit te zien. We stellen automatisch de beste combinaties samen zonder dubbelgebruik.",craftable:"Mogelijke combinaties",empty:"Nog geen items in deze figuur.",wave:"Wave",inWallet:"in wallet",note:"Let op: craften kan als je binnen één wave elk figuur minimaal 1× bezit. Elke NFT kan maar één keer gebruikt worden."},
+  en: {title:"Waves",desc:"Pick a wave to view holdings. We automatically build the best non-overlapping combinations.",craftable:"Possible combos",empty:"No items yet for this figure.",wave:"Wave",inWallet:"in wallet",note:"Heads up: you can craft when you hold at least 1 of each figure in a wave. Each NFT can only be used once."},
+  es: {title:"Waves",desc:"Elige una wave para ver tus posesiones. Creamos automáticamente las mejores combinaciones sin reutilizar.",craftable:"Combinaciones posibles",empty:"Aún no hay items para esta figura.",wave:"Wave",inWallet:"en wallet",note:"Aviso: puedes craftear si tienes al menos 1 de cada figura en una wave. Cada NFT solo puede usarse una vez."}
+};
+
+var WAVES = [
+  { id:1, name:"Wave 1", figures:[
+    { name:"GREEN LANTERN B.A.F", contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d" },
+    { name:"BATMAN B.A.F",        contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0" },
+    { name:"AQUAMAN B.A.F",       contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e" }
+  ]},
+  { id:2, name:"Wave 2", figures:[
+    { name:"GREEN ARROW B.A.F",   contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7" },
+    { name:"SUPERMAN B.A.F",      contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346" },
+    { name:"THE ATOM B.A.F",      contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74" }
+  ]},
+  { id:3, name:"Wave 3", figures:[
+    { name:"ROBIN OF EARTH -2 B.A.F",      contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05" },
+    { name:"THE JOKER SILVER AGE B.A.F",   contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e" },
+    { name:"THE FLASH SPEED FORCE B.A.F",  contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f" }
+  ]},
+  { id:4, name:"Wave 4", figures:[
+    { name:"DR FATE B.A.F",                contract:"0x636045ab763b493a80350bfbd08e038029056ae2" },
+    { name:"SUPERMAN SILVER AGE B.A.F",    contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be" },
+    { name:"TWO-FACE SILVER AGE",          contract:"0x89696ef507b55741dc311733b7658fba5c8eea91" }
+  ]},
+  { id:5, name:"Wave 5", figures:[
+    { name:"Batman - No Man's Land",      contract:"0xaa1d4c0eab9e4152890abb71fab015e23905e491" },
+    { name:"Batgirl - Stephanie Brown",   contract:"0x19b2dfff394cac6bec13f1ab00723763c5b9b659" },
+    { name:"Nightwing - Bronze Age",      contract:"0x5051775029610e48d325e65d6c5d56fe607bcc0d" },
+    { name:"Monarch",                     contract:"0x55e79461a5accca44f9a4744fe3215d593c79218" }
+  ]}
+];
+
+var FIGURE_CONTRACTS = (function(){ 
+  var a=[], i,j; 
+  for(i=0;i<WAVES.length;i++){ for(j=0;j<WAVES[i].figures.length;j++){ var fig=WAVES[i].figures[j]; if(fig && fig.contract){ a.push(String(fig.contract).toLowerCase()); } } }
+  return a;
+})();
+
+function get(obj, path, fallback){
+  try{
+    var parts = path.split('.'); var cur = obj;
+    for (var i=0;i<parts.length;i++){ if (!cur || typeof cur!=='object') return fallback; cur = cur[parts[i]]; }
+    return (cur===undefined||cur===null)?fallback:cur;
+  }catch(e){ return fallback; }
+}
+function parseOwnersText(text) {
+  var parts=(text||'').split(/[\s,]+/); var out=[];
+  for (var i=0;i<parts.length;i++){ var s=parts[i].trim(); if (/^0x[a-fA-F0-9]{40}$/.test(s)) out.push(s); }
+  return out;
+}
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('mcf_theme', theme);
+  var sun=document.getElementById('icon-sun'), moon=document.getElementById('icon-moon');
+  if (theme === 'dark') { sun.classList.add('hidden'); sun.classList.remove('visible'); moon.classList.add('visible'); moon.classList.remove('hidden'); }
+  else { sun.classList.add('visible'); sun.classList.remove('hidden'); moon.classList.add('hidden'); moon.classList.remove('visible'); }
+}
+function toggleTheme(){ var cur=document.documentElement.getAttribute('data-theme')||'dark'; setTheme(cur==='dark'?'light':'dark'); }
+function tkey(key){ var lang=document.documentElement.lang||'nl'; return (I18N[lang]&&I18N[lang][key]) || I18N.nl[key] || key; }
+function setLang(lang) {
+  var t = I18N[lang] || I18N.nl;
+  document.getElementById('t_title').textContent = t.title;
+  document.getElementById('t_desc').textContent = t.desc;
+  document.getElementById('t_craftable').textContent = t.craftable;
+  document.getElementById('t_note').textContent = t.note;
+  document.documentElement.lang = lang; localStorage.setItem('mcf_lang', lang);
+  var langs=document.querySelectorAll('.lang'); for (var i=0;i<langs.length;i++){ var el=langs[i]; el.classList.toggle('active', el.getAttribute('data-lang')===lang); }
+  renderWaveChips(); renderCurrentWave();
+}
+function initLang() {
+  var url = new URL(location.href); var qLang=url.searchParams.get('lang'); var stored=localStorage.getItem('mcf_lang'); var lang=qLang||stored||'nl'; setLang(lang);
+}
+function showToast(msg, ms){var t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(function(){t.classList.remove('show');}, ms||4000);}
+
+function normalizeOwner(owner) {
+  var addr = (owner||"").trim();
+  if (/^ETHEREUM:/i.test(addr)) return addr;
+  if (/^POLYGON:/i.test(addr)) return addr.replace(/^POLYGON:/i, "ETHEREUM:");
+  if (/^0x[a-fA-F0-9]{40}$/.test(addr)) return "ETHEREUM:" + addr;
+  return addr;
+}
+function fetchOwnerItems(owner, apiKey, continuation, cbOk, cbErr) {
+  var url = new URL("https://api.rarible.org/v0.1/items/byOwner");
+  url.searchParams.set("owner", normalizeOwner(owner));
+  url.searchParams.set("size", "200");
+  if (continuation) url.searchParams.set("continuation", continuation);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url.toString(), true);
+  xhr.setRequestHeader("X-API-KEY", apiKey);
+  xhr.setRequestHeader("Accept", "application/json");
+  xhr.onreadystatechange = function(){
+    if (xhr.readyState === 4){
+      if (xhr.status>=200 && xhr.status<300){
+        try{ cbOk(JSON.parse(xhr.responseText)); } catch(e){ cbErr(e); }
+      } else {
+        cbErr(new Error("Rarible error " + xhr.status + " " + xhr.responseText));
+      }
+    }
+  };
+  xhr.send();
+}
+function loadAllItems(owners, apiKey, done, fail){
+  var acc = [];
+  var oi = 0;
+  function nextOwner(){
+    if (oi >= owners.length) return done(acc);
+    var owner = owners[oi++];
+    var cont = null; var loops = 0;
+    function nextPage(){
+      fetchOwnerItems(owner, apiKey, cont, function(data){
+        var items = (data && data.items) ? data.items : [];
+        for (var k=0;k<items.length;k++){
+          var it = items[k];
+          var id = it.id || ""; var parts = id.split(":");
+          var contract = (parts[1]||"").toLowerCase();
+          if (FIGURE_CONTRACTS.indexOf(contract) === -1) continue;
+          acc.push({
+            id: id,
+            contract: contract,
+            tokenId: parts[2]||"",
+            owner: owner,
+            name: get(it, "meta.name", ""),
+            image: get(get(it, "meta.content", [])[0] || {}, "url", get(get(it, "meta.image", {}), "url", "")),
+            attributes: get(it, "meta.attributes", []),
+            collection: it.collection || it.contract || "",
+            raw: it
+          });
+        }
+        cont = data && data.continuation ? data.continuation : null;
+        loops++; if (cont && loops<40) nextPage(); else nextOwner();
+      }, function(err){ fail(err); });
+    }
+    nextPage();
+  }
+  nextOwner();
+}
+
+function tokenSortKey(t){
+  var n = parseInt(t.tokenId, 10);
+  if (!isFinite(n)) n = Number.MAX_SAFE_INTEGER;
+  return n;
+}
+
+function indexByWaveFigure(tokens) {
+  var map = new Map(); var i,j;
+  for (i=0;i<WAVES.length;i++){
+    var m = new Map();
+    for (j=0;j<WAVES[i].figures.length;j++){ var f=WAVES[i].figures[j]; var key=(f&&f.contract)?String(f.contract).toLowerCase():null; if(key){ m.set(key, []); } }
+    map.set(WAVES[i].id, m);
+  }
+  for (i=0;i<tokens.length;i++){
+    var t = tokens[i];
+    for (j=0;j<WAVES.length;j++){
+      var w = WAVES[j];
+      var z, f=null;
+      for (z=0; z<w.figures.length; z++){ var ff=w.figures[z]; var key=(ff&&ff.contract)?String(ff.contract).toLowerCase():null; if (key && key===t.contract){ f=ff; break; } }
+      if (!f) continue;
+      var m2 = map.get(w.id);
+      var fkey = (f&&f.contract)?String(f.contract).toLowerCase():null;
+      if (fkey && m2.has(fkey)) { m2.get(fkey).push(t); }
+    }
+  }
+  for (i=0;i<WAVES.length;i++){
+    var w2=WAVES[i]; var m3=map.get(w2.id);
+    for (j=0;j<w2.figures.length;j++){
+      var f2=w2.figures[j]; var key2=(f2&&f2.contract)?String(f2.contract).toLowerCase():null;
+      if(key2 && m3.has(key2)) { m3.get(key2).sort(function(a,b){ return tokenSortKey(a)-tokenSortKey(b); }); }
+    }
+  }
+  return map;
+}
+
+function buildCombosForWave(wave, figMap, max){
+  if (typeof max === "undefined") max = 50;
+  var lists = []; var i;
+  for (i=0;i<wave.figures.length;i++){
+    var f=wave.figures[i]; var key=(f&&f.contract)?String(f.contract).toLowerCase():null; var arr = key && figMap.has(key) ? figMap.get(key).slice() : [];
+    lists.push(arr);
+  }
+  var m = 0; for (i=0;i<lists.length;i++){ if (lists[i].length > m) m = lists[i].length; }
+  var combos = [];
+  for (var idx=0; idx<Math.min(m,max); idx++){
+    var row = []; for (i=0;i<lists.length;i++){ row.push(lists[i][idx] || null); }
+    combos.push(row);
+  }
+  return combos;
+}
+
+var CURRENT_WAVE = 1;
+var OWNED = [];
+var INDEX = new Map();
+
+function renderWaveChips() {
+  var div = document.getElementById('waveChips'); div.innerHTML="";
+  for (var i=0;i<WAVES.length;i++){
+    (function(w){
+      var chip = document.createElement('div'); chip.className='chip'; chip.setAttribute('data-wave', w.id); chip.textContent=tkey('wave')+' '+w.id;
+      var badge = document.createElement('span'); badge.className='badge'; badge.id='waveBadge'+w.id; badge.textContent='…';
+      chip.appendChild(badge);
+      if (w.id===CURRENT_WAVE) chip.classList.add('active');
+      chip.addEventListener('click', function(){ CURRENT_WAVE=w.id; renderWaveChips(); renderCurrentWave(); });
+      div.appendChild(chip);
+    })(WAVES[i]);
+  }
+}
+
+function renderCurrentWave() {
+  var w = null;
+  for (var i=0;i<WAVES.length;i++){ if (WAVES[i].id===CURRENT_WAVE){ w=WAVES[i]; break; } }
+  if (!w) return;
+  var figGrid = document.getElementById('figGrid'); figGrid.innerHTML="";
+  var figMap = INDEX.get(w.id) || new Map();
+  var counts = [];
+  for (var j=0;j<w.figures.length;j++){
+    var f = w.figures[j];
+    var key=(f&&f.contract)?String(f.contract).toLowerCase():null;
+    var list = key && figMap.has(key) ? figMap.get(key) : [];
+    counts.push(list.length);
+    var card = document.createElement('div'); card.className='fig-card';
+    var h = document.createElement('h3'); h.textContent = f.name;
+    var meta = document.createElement('div'); meta.className='fig-meta';
+    meta.innerHTML = '<span class="muted">'+w.name+'</span><span><span class="count">'+list.length+'</span> '+tkey('inWallet')+'</span>';
+    var gal = document.createElement('div'); gal.className='gallery';
+    if (!list.length) {
+      var empty = document.createElement('div'); empty.className='empty'; empty.textContent = tkey('empty'); gal.appendChild(empty);
+    } else {
+      for (var k=0;k<Math.min(list.length, 8);k++){
+        var tok = list[k];
+        var th = document.createElement('div'); th.className='thumb';
+        var img = document.createElement('img'); img.src = tok.image || ''; img.alt = tok.name || tok.id;
+        th.appendChild(img); gal.appendChild(th);
+      }
+    }
+    card.appendChild(h); card.appendChild(meta); card.appendChild(gal);
+    figGrid.appendChild(card);
+  }
+  var kmin = counts.length ? counts[0] : 0;
+  for (var c=1;c<counts.length;c++){ if (counts[c] < kmin) kmin = counts[c]; }
+  var badge = document.getElementById('waveBadge'+w.id);
+  if (badge) badge.textContent = tkey('craftable')+': '+kmin;
+  renderPlanner(w, kmin);
+}
+
+function renderPlanner(wave, k) {
+  var planner = document.getElementById('planner');
+  var hdr = document.getElementById('plannerHdr');
+  var rows = document.getElementById('plannerRows');
+  var header = '<div>#</div>';
+  for (var i=0;i<wave.figures.length;i++){ header += '<div>'+wave.figures[i].name+'</div>'; }
+  hdr.innerHTML = header;
+  var cols = '28px ' + ('1fr '.repeat(wave.figures.length)).trim();
+  hdr.style.gridTemplateColumns = cols;
+  var figMap = INDEX.get(wave.id) || new Map();
+  var combos = buildCombosForWave(wave, figMap, 50);
+  // count full rows
+  var completeCount = 0;
+  for (var rr=0; rr<combos.length; rr++){ 
+    var miss=false; for (var cc=0; cc<combos[rr].length; cc++){ if (!combos[rr][cc] || typeof combos[rr][cc] !== 'object') { miss=true; break; } }
+    if (!miss) completeCount++;
+  }
+  document.getElementById('craftableCount').textContent = completeCount;
+  planner.style.display = combos.length ? 'block' : 'none';
+  rows.innerHTML = "";
+  for (var r=0;r<combos.length;r++){
+    var combo = combos[r];
+    var hasMissing = false;
+    for (var c0=0;c0<combo.length;c0++){ var t0 = combo[c0]; if (!t0 || typeof t0 !== 'object') { hasMissing = true; break; } }
+    var row = document.createElement('div'); row.className='row';
+    row.classList.add(hasMissing ? 'incomplete' : 'complete');
+    row.style.gridTemplateColumns = cols;
+    var kCell = document.createElement('div'); kCell.className='k'; kCell.textContent = (r+1);
+    row.appendChild(kCell);
+    for (var c=0;c<combo.length;c++){
+      var tok = combo[c];
+      if (!tok || typeof tok !== 'object') {
+        var miss = document.createElement('div'); miss.className='slot missing'; row.appendChild(miss); continue;
+      }
+      var slot = document.createElement('div'); slot.className='slot';
+      var img = document.createElement('img'); img.src = (tok && tok.image) ? tok.image : ''; img.alt = (tok && (tok.name || tok.id)) ? (tok.name || tok.id) : '?';
+      var meta = document.createElement('div'); meta.className='meta';
+      meta.textContent = (tok && (tok.name || tok.id)) ? (tok.name || tok.id) : '?';
+      slot.appendChild(img); slot.appendChild(meta);
+      row.appendChild(slot);
+    }
+    rows.appendChild(row);
+  }
+}
+
+
+
+function exportCombosCSV() {
+  var wave = null;
+  for (var i=0;i<WAVES.length;i++){ if (WAVES[i].id===CURRENT_WAVE){ wave=WAVES[i]; break; } }
+  if (!wave) return;
+  var figMap = INDEX.get(wave.id) || new Map();
+  var combos = buildCombosForWave(wave, figMap, 50);
+  var headers = ["#"];
+  for (var h=0; h<wave.figures.length; h++){ headers.push(wave.figures[h].name); }
+  var lines = [headers.join(",")];
+  for (var r=0; r<combos.length; r++){
+    var row = [r+1];
+    for (var c=0; c<combos[r].length; c++){
+      var t = combos[r][c];
+      row.push(t && t.contract ? (t.contract + ':' + t.tokenId) : 'X');
+    }
+    lines.push(row.join(","));
+  }
+  var blob = new Blob([lines.join("\n")], {type:"text/csv"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href = url; a.download = 'wave' + wave.id + '_combos.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+function renderSetup(show, apiKeyVal, ownersVal) {
+  var el = document.getElementById('setup'); if (!el) return;
+  el.style.display = show ? 'block' : 'none';
+  if (show) {
+    var apiEl = document.getElementById('apiKey'); if (apiEl) apiEl.value = apiKeyVal || (localStorage.getItem('rarible_api_key') || "");
+    var ownersEl = document.getElementById('owners'); if (ownersEl) ownersEl.value = ownersVal || (localStorage.getItem('mcf_owners') || "");
+  }
+}
+
+async function boot() {
+  document.getElementById('exportCSV').addEventListener('click', exportCombosCSV);
+  initLang();
+
+  var urlObj = new URL(location.href);
+  var apiKey = urlObj.searchParams.get('api') || localStorage.getItem('rarible_api_key') || "";
+  var ownersParam = urlObj.searchParams.get('owners') || localStorage.getItem('mcf_owners') || "";
+  var owners = parseOwnersText(ownersParam).length ? parseOwnersText(ownersParam) : ownersParam.split(',').map(function(s){return s.trim();}).filter(function(Boolean){return Boolean;});
+
+  if (!apiKey || !owners.length) {
+    showToast("API-key of wallets ontbreken. Vul ze hieronder in.", 5000);
+    renderSetup(true, apiKey, ownersParam);
+    var btn = document.getElementById('saveSetup');
+    if (btn) btn.addEventListener('click', async function(){
+      var apiIn = document.getElementById('apiKey').value.trim();
+      var ownersIn = parseOwnersText(document.getElementById('owners').value);
+      if (!apiIn) { showToast("Vul je Rarible API-key in.", 3000); return; }
+      if (!ownersIn.length) { showToast("Vul minimaal één 0x-adres in.", 3000); return; }
+      localStorage.setItem('rarible_api_key', apiIn);
+      localStorage.setItem('mcf_owners', ownersIn.join(','));
+      showToast("Opgeslagen. Data wordt geladen…", 2500);
+      setTimeout(function(){ location.href = location.pathname + "?owners=" + ownersIn.join(','); }, 300);
+    });
+    renderWaveChips(); renderCurrentWave();
+    return;
+  } else {
+    renderSetup(false);
+  }
+
+  loadAllItems(owners, apiKey, function(all){
+    OWNED = all;
+    INDEX = indexByWaveFigure(OWNED);
+    renderWaveChips(); renderCurrentWave();
+  }, function(e){
+    console.warn("Fetch failed, using empty dataset.", e);
+    showToast("Kon collectie niet laden: " + (e && e.message ? e.message : "API error") + ". Tip: owner gebruikt ETHEREUM:0x…", 7000);
+    OWNED = [];
+    INDEX = indexByWaveFigure(OWNED);
+    renderWaveChips(); renderCurrentWave();
+  });
+}
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
