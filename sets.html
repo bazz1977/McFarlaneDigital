@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="nl" data-app-version="v1.9.7">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XP Sets • McFarlane Hub (v1.9.7)</title>
+  <style>
+    :root {
+      --bg:#0b0c10; --panel:#0f1117; --muted:#9aa4b2; --text:#e8ecf1; --brand:#7f5af0;
+      --line:rgba(255,255,255,.08); --chip:#141824; --chip-line:rgba(255,255,255,.12);
+      --btn:#5161f5; --btn-hover:#5f6efd;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --rarity-common:#ffffff; --rarity-rare:#10b981; --rarity-epic:#2fb3ff; --rarity-legendary:#ef4444; --rarity-exotic:#fbbf24;
+    }
+    [data-theme="light"] {
+      --bg:#f6f7fb; --panel:#fff; --muted:#5c6675; --text:#0b0c10; --brand:#6a4df4;
+      --line:rgba(0,0,0,.08); --chip:#f0f2f7; --chip-line:rgba(0,0,0,.1);
+      --btn:#4455f5; --btn-hover:#5262ff;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    .wrap { max-width:1200px; margin:0 auto; padding:14px; }
+    .top { display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center; }
+    .title { font-weight:800; display:flex; align-items:center; gap:8px; }
+    .pill { background:var(--chip); border:1px solid var(--chip-line); padding:4px 10px; border-radius:999px; font-size:12px; color:#cbd3dc; }
+    .actions { display:flex; gap:8px; align-items:center; }
+    .lang, .theme { width:32px; height:32px; border-radius:8px; background:var(--chip); border:1px solid var(--chip-line); display:grid; place-items:center; cursor:pointer; }
+    .lang.active { outline:2px solid var(--brand); }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+    .search { flex:1; min-width:250px; padding:10px 12px; border-radius:10px; border:1px solid #1a2030; background:#0e1116; color:var(--text); }
+    [data-theme="light"] .search { background:#f6f8ff; border-color:#e5e8f4; }
+    .filterbtn { padding:8px 10px; border-radius:10px; border:1px solid var(--chip-line); background:var(--chip); color:var(--text); cursor:pointer; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:12px; margin-top:14px; }
+    .card { background:#111319; border:1px solid var(--line); border-radius:14px; overflow:hidden; position:relative; }
+    [data-theme="light"] .card { background:#fff; }
+    .media { aspect-ratio:16/10; background:#0f1117; display:grid; place-items:center; }
+    [data-theme="light"] .media { background:#eef1fb; }
+    .media img { width:100%; height:100%; object-fit:cover; display:block; }
+    .body { padding:10px 12px 12px; }
+    .name { font-size:1rem; font-weight:800; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+    .muted { color:var(--muted); font-size:.82rem; }
+    .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+    .chip { background:var(--chip); border:1px solid var(--chip-line); border-radius:999px; padding:3px 8px; font-size:.75rem; }
+    .kpi { display:flex; gap:8px; margin-top:8px; }
+    .kpi .pill { font-weight:700; }
+    .btn { display:inline-block; padding:7px 10px; background:var(--btn); color:#fff; border-radius:10px; text-decoration:none; font-weight:700; }
+    .btnsec { display:inline-block; padding:7px 10px; background:var(--chip); color:var(--text); border-radius:10px; text-decoration:none; border:1px solid var(--chip-line); }
+    .cat { position:absolute; top:8px; left:8px; }
+    dialog::backdrop { background: rgba(0,0,0,.5); }
+    dialog { border:1px solid var(--line); border-radius:16px; padding:0; overflow:hidden; width:min(900px, 96vw); background:var(--panel); color:var(--text); }
+    .dlghead { display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--line); }
+    .dlgbod { padding:12px; display:grid; gap:10px; }
+    .rows { display:grid; gap:8px; }
+    .row { background:var(--chip); border:1px solid var(--chip-line); padding:8px; border-radius:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .row a { color:inherit; }
+  
+    .assetBadge { position:absolute; bottom:8px; left:8px; background:var(--chip); border:1px solid var(--chip-line);
+                   padding:3px 8px; border-radius:999px; font-size:.72rem; opacity:.9; }
+  
+.choose-btn{margin-left:8px;padding:2px 8px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:#1a2030;color:#cde;cursor:pointer}
+.choose-btn[disabled]{opacity:.5;cursor:default}
+.clear-btn{margin-left:8px;padding:2px 8px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:#2a1a1a;color:#f7c0c0;cursor:pointer}
+
+.progress-badge{position:absolute;top:10px;right:10px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);font:600 12px/18px ui-sans-serif;background:#10131a;color:#9fb0c9}
+.card{position:relative}
+
+/* Details modal (sets) */
+.modal { position:fixed; inset:0; display:none; z-index:70; }
+.modal:not(.hidden) { display:block; }
+.modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,.5); backdrop-filter: blur(2px); }
+.modal-card { position:relative; max-width:min(1100px, 94vw); max-height:82vh; overflow:auto;
+  margin:6vh auto 0; background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:0 14px 40px rgba(0,0,0,.45); }
+.modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); }
+.modal-body { padding:16px; }
+.meta-grid { display:grid; grid-template-columns: 1fr; gap:16px; }
+.meta-grid.has-image { grid-template-columns: 1.15fr .85fr; }
+.meta-card { border:1px solid var(--line); background:var(--canvas); border-radius:12px; padding:12px; }
+.meta-table { width:100%; border-collapse:collapse; }
+.meta-table th, .meta-table td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+.meta-table th { width:160px; font-weight:600; color:var(--muted); }
+.meta-table tr:last-child th, .meta-table tr:last-child td { border-bottom:none; }
+.preview { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#000; }
+.preview img { width:100%; height:auto; display:block; }
+details.meta-toggle > summary { cursor:pointer; font-weight:600; list-style:none; }
+details.meta-toggle > summary::-webkit-details-marker { display:none; }
+details.meta-toggle { border:1px solid var(--line); background:var(--canvas); border-radius:12px; padding:10px 12px; }
+details.meta-toggle pre { margin-top:8px; white-space:pre-wrap; font-size:.85rem; background:var(--chip); border:1px solid var(--chip-line); border-radius:10px; padding:12px; }
+.copybtn { margin-left:8px; padding:2px 8px; border-radius:8px; border:1px solid var(--chip-line); background:var(--chip); font-size:.75rem; }
+
+
+/* Rarity pills */
+.rarity { display:inline-flex; align-items:center; padding:3px 10px; min-height:26px;
+  border-radius:999px; font-size:12px; font-weight:600; line-height:1; border:1px solid transparent; color:#0b0c10; }
+.rarity.common { background: var(--rarity-common) !important; color:#0b0c10 !important; border-color:#e5e7eb; }
+.rarity.rare { background: var(--rarity-rare) !important; color:#0b0c10 !important; border-color:#0d9467; }
+.rarity.epic { background: var(--rarity-epic) !important; color:#0b0c10 !important; border-color:#1f8fd1; }
+.rarity.legendary { background: var(--rarity-legendary) !important; color:#0b0c10 !important; border-color:#b91c1c; }
+.rarity.exotic { background: var(--rarity-exotic) !important; color:#0b0c10 !important; border-color:#b88406; }
+
+
+/* Ensure set-name always occupies 3 lines */
+.card .body .name {
+  line-height: 1.25;
+  -webkit-line-clamp: 3;
+  max-height: calc(3 * 1.25em);
+  min-height: calc(3 * 1.25em);
+  overflow: hidden;
+}
+
+
+/* Fix rarity-pills row to a single line with consistent height */
+.card .body .req,
+.card .body .requirements {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  min-height: 30px;
+  max-height: 30px;
+}
+
+
+/* Rarity chips row: single line, fixed height */
+.card .body .chips {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  min-height: 30px;
+  max-height: 30px;
+}
+
+
+/* Contract + Asset chip styling for header requirements */
+.chip.contract { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: transparent; border-color: var(--chip-line); color: var(--muted); }
+.chip.asset { border-style:dashed; }
+</style>
+</head>
+<body>
+  <div id="detailModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="detailTitle">Details</h3>
+        <button id="detailClose" class="btn close" aria-label="Close">×</button>
+      </div>
+      <div id="detailBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="title">XP Sets <span class="pill">Polygon</span> <span id="badgeAll" class="pill">—</span> <span id="badgeEarned" class="pill">XP: —</span></div>
+      <div class="actions">
+        <a class="btnsec" id="backResults">← Results</a>
+        <div class="lang" data-lang="nl" title="Nederlands">🇳🇱</div>
+        <div class="lang" data-lang="en" title="English">🇬🇧</div>
+        <div class="lang" data-lang="es" title="Español">🇪🇸</div>
+        <button class="theme" id="themeBtn" title="Toggle theme">🌗</button>
+      </div>
+    </div>
+    <div class="controls">
+      <input id="search" class="search" placeholder="Zoek set…" />
+      <button class="filterbtn" id="toggleOwned">Toon alleen maakbare sets: uit</button>
+      <span class="muted" id="status">Bezig met laden…</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <dialog id="dlg">
+    <div class="dlghead">
+      <div>
+        <div id="dlgTitle" style="font-weight:800;"></div>
+        <div class="muted" id="dlgSub"></div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="pill" id="dlgXP"></span>
+        <button class="filterbtn" id="dlgClose">✖</button>
+      </div>
+    </div>
+    <div class="dlgbod">
+      <div class="chips" id="dlgReqs"></div>
+      <div class="rows" id="dlgRows"></div>
+    </div>
+  </dialog>
+
+<script>
+const ALMOST_MIN_PER_SLOT = 1; // show 'Almost there' only if every slot has ≥ this many candidates
+
+// --- Contract → Licensor mapping (edit/expand here) ---
+const CONTRACT_TO_LICENSOR = {
+  // '0x0000000000000000000000000000000000000000': 'DC',
+  // '0x1111111111111111111111111111111111111111': 'BRZRKR',
+  // '0x2222222222222222222222222222222222222222': 'TWD',
+};
+function normalizeAddr(a){
+  if(!a) return '';
+  const s = String(a).trim();
+  return s.startsWith('0x') ? s.toLowerCase() : s.toLowerCase();
+}
+function licensorsFromReq(def){
+  const set = new Set();
+  for(const r of (def.req||[])){
+    const list = r.contracts || [r.contract].filter(Boolean);
+    if(Array.isArray(list)){
+      for(const c of list){
+        const name = CONTRACT_TO_LICENSOR[normalizeAddr(c)];
+        if(name) set.add(name);
+      }
+    }
+  }
+  return Array.from(set);
+}
+const CHAIN = "POLYGON";
+const OWNER_GROUP = "ETHEREUM";
+const CONTRACTS = ["0x0039650dc457f9b5002112fe1ee4c7895f5c14e2", "0x00c0461804ffcca9db1bc9ffdb5050631f57c8e8", "0x01d55cc5854d26af65dd7f4bcb0da44b76ac23e1", "0x028ab77ff9794d2b02f11f77a01c7c2f96618916", "0x02994090747138a15361560f943cc5fbfcff256d", "0x049474b730f15d863e4b87c352fae7d5acc1197f", "0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2", "0x06780a1388a4c8c06267e3b2b881539bd652f2a8", "0x0866e58f7faaa78b7bf709398c131586cedf0833", "0x08d13b81502280b3e3b0ca09af7355fc55da24d5", "0x0fd66c55e5861129376f207b59d71aacb1b0cc4f", "0x10cddef1c416f3462b4f6a8ad7255adc1350339d", "0x125ca8cfece0a950dd33cc7c9d4e132f72dc545a", "0x186b4d896d3be406ba4868541f866eb58ad6373e", "0x199d31c147a965ae1c2f899b5d6fa83b39e88cd8", "0x19b2dfff394cac6bec13f1ab00723763c5b9b659", "0x19f5dd4d1315adfcda911dbb811f9f1d129cf6ca", "0x1a1ffebb38d7763d897c7f265c1afe48b41843b6", "0x1b15a670992d7b2475ed9578ef962bdc22f753a6", "0x1b79f3d95d9b449dd6a38d03cfa05f105a7b5457", "0x227af9b628d578486a6d0f69b36d1de2d0ca900b", "0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", "0x240a1d938d78c76ad8af1ce080858614da311636", "0x2595b68c39f9f42f6d533f85fca4cdc6fff29a09", "0x2879c5b410b82b4fb5e87d9527d3c2017fae0ff8", "0x29dfefe0aecc0bc7e352f7776fc77b8a39b1155e", "0x2aa7a00fdf555411882bc7802fcdda457942f797", "0x2b3d922b71d5bb1d745859f8c2cfa00951bd382a", "0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3", "0x34b4f2c74541d370907cf8bd642a62cc8155ecf3", "0x355879b619c53f4bc67c9778d4f1e4cc44c484a4", "0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", "0x3818f05d6e3202848c073c76f5cb202c1d2c55f8", "0x38abd666964fdbb32851cea3df7322facb246eac", "0x398acb7ea6a9602a57d3eaec89588923b5235bc5", "0x3ca89fcea0934efaadf2381906ca1cb004f8989d", "0x3e7247dadddaab9917d5acc226e7aede855346ae", "0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1", "0x405147e7a29f275187be2b9674ffe7b455075235", "0x416e40a2a56b89ade4374f48b491df7752daef1e", "0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", "0x43248fc0a82b96ee59f9a10d8eabbde700b006f9", "0x440de7e698321293111aa106ca05a613e6651366", "0x44637ccc451be5e60183207596f722ce64b1fb7e", "0x4867349931a547c47e3f4b4dffe7afa5c59b6174", "0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", "0x49e85cf230477fbb438d6b800e8b4d9260a34f06", "0x4a24d3cc908f3eb85fb30a0418c1b2f04cb0331e", "0x4a73767ee7ef0fcda73dd194a37eb8fec1fa8240", "0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", "0x4e4c5fcc39f6ff90a6e1862b354703c683bd07c5", "0x503ccea5984975f057ce957a1cdca61dbd731405", "0x5051775029610e48d325e65d6c5d56fe607bcc0d", "0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", "0x50ed79948a280f38d11b5134295fb8064778cdbf", "0x53247d58b7e1731a730773f5370f712867a22b5f", "0x53be625557a2d9453bfefe9fe569984946eb7e8c", "0x53c3d1b90b14044dee9f6cb1df602544b8f154a8", "0x55e79461a5accca44f9a4744fe3215d593c79218", "0x5604d1e3fa0347c652d27ae3091075b561a53699", "0x5847dd7002f1874bf55dd8c1db95b0bbfea84a08", "0x5beeee0a5630f90628cdf36d806ea06c9053b19c", "0x5d666f215a85b87cb042d59662a7ecd2c8cc44e6", "0x5f075c762e276a6527846427e66c75e89ef30091", "0x636045ab763b493a80350bfbd08e038029056ae2", "0x6514a84948e5a26f3fa34090c66b7dd687283f8d", "0x651879523e831763519ab8df1d8cd6fa8c4c9937", "0x6631a60056f02aa68015557ffbbc683d78987e79", "0x66c207a6075075cf033973fb2fc0b469c1e20d1d", "0x66fc5b74aa52565d62ada7f15cbe042a4999e22e", "0x6803e9e8c9cbb318ecb97c505318fb500313043b", "0x681f695eb7659d26b95f5ea3197e348af81450e8", "0x6b2c6f1dec14f00d14d6f8f56dd52e2edabeffff", "0x6b75497bd0a94b03353c69cd93317e2a3b9ac803", "0x6dc606389aa3532ae50b4af4066ca8bfc984f964", "0x7180b24b73495968acd96f700f0860599a75dc9e", "0x727ae2af1a3f57f218e749ba4a041fee42483f76", "0x79f1437646c048815a4187f598b877595f184592", "0x7a768033aae19e13345686618bdcbf735e9b9a74", "0x7cb3de1557bad446c25edb6fb519f2f186ed1589", "0x81dc41d9c1c3b515dc367430497397b3e162ad2c", "0x8732dbd44da56c7a4694bdecbc9dae4436c9b284", "0x89696ef507b55741dc311733b7658fba5c8eea91", "0x89ed4239d327856e31ae5194006a7c99e53babf3", "0x8bc163742f67a4ceba6babcce6f3610b7927ce0a", "0x8bcb47ba475fd7d52975a5c660750ad5e60a6281", "0x8bd04639547c44d8832b0cd810415f66f4e3d4a4", "0x98cbf6d430f1038ecbcc847dda4ea54ace8290a9", "0x9924b923641deb3a1de544746317dec501347d41", "0x9a4767252f3b40929bc579a9c6f3d140c0901af2", "0x9c3d258be359b70b9c3fc0fece97cfb172c3fa13", "0x9e3a3be28247fd1d583d812dbd52dcbb6cee63eb", "0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", "0xa26a919550dc30e4122947b531caa9ff1d56378f", "0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", "0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", "0xa85de5ed02b2d3c8130bdcd22605d0f1b44636ca", "0xaa1d4c0eab9e4152890abb71fab015e23905e491", "0xab575d5961a4929386288ccb4cd6ff88cdf253d2", "0xaf37e249b74b2cf57bfa1ab6cdfa88248e821cb7", "0xb0615c506fc5c7e11057a5d591e02d9d8b8f7c6a", "0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", "0xb78aef31e52e7c2ac55bfa87117372ed06b8f067", "0xb817501dbcdc39c87d7afab91f41eb3608f312be", "0xb8a7187428235f26a9f43dea17126737cb925511", "0xc059bb266f825e2c29c860689ee5ed9597ab0bbd", "0xc0e360dae3bdcb967b16806a14e9621ece8b479a", "0xc350f54d2d41e559e6ef0c178e303165367b033b", "0xc50692526a8c2c2798a8434dd620616b26ec6d37", "0xcbb05c528969a6afe1a4c0fd6a08280fd3bd46a2", "0xcbf934975f8ec0fe153964441ee78bad752fadbe", "0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", "0xcdce27f3e506dab51ac1966b73000962375b61a3", "0xce15655e447667e0a5d90e4e022624f86cd53667", "0xd03c73c8f3e8c7e7957b43df402ecb7640d89f62", "0xd42dd7a255a7c3067ab57f66484bd65287fb6de8", "0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", "0xdaca3b923d445d727ecb617608bcc7ff1b04ec7f", "0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", "0xdd3b6a3e138c9ff9cbb288477868a66b33a5242b", "0xe012c6e6a160fdf15787d7a1b7a589486dde080e", "0xe1b1dc89e99f3f1e846e23a3cc3a09eb20a103e1", "0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", "0xe3ae4e46917540b7760bf7702be2f2c503f9bc4b", "0xe3c14a10f4398653569ab8eb2f86070565e22206", "0xe903dbd81d8ed1286c5f03720706920929564924", "0xea4228d68438a21bea9c28e2a20f47666e8087cc", "0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9", "0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", "0xf53358fba52b6bd19d0b25f29e727c419f0ee9ea", "0xf5f164771bfd542aa608141922a91383f7196992", "0xf7c84f9e98e1143eb6a8d181d1359cce273c575a", "0xfb56b2ce3bd8722952b2ef9d0e9dfcb8bc1c9eaa", "0xfcc2919a153785d8b0181b05212d54eb5b313a3e", "0xffb78df85abd8b570e4143b7b0c63c29d7e70829", "0xffe8af9c1b48dc4f71c37c0d0fe1db429bbeeaee"];
+
+// language
+const I18N = {
+  nl: { title:"XP Sets", search:"Zoek set…", only:"Toon alleen maakbare sets", on:"aan", off:"uit", loading:"Bezig met laden…", all:n=>`Sets: ${n}`, earned:n=>`XP: ${n}`, results:"← Resultaten", requirements:"Benodigd:", combo:xp=>`= ${xp} XP` },
+  en: { title:"XP Sets", search:"Search sets…", only:"Show completable sets only", on:"on", off:"off", loading:"Loading…", all:n=>`Sets: ${n}`, earned:n=>`XP: ${n}`, results:"← Results", requirements:"Requires:", combo:xp=>`= ${xp} XP` },
+  es: { title:"Conjuntos XP", search:"Buscar conjuntos…", only:"Solo conjuntos completables", on:"activado", off:"desactivado", loading:"Cargando…", all:n=>`Conjuntos: ${n}`, earned:n=>`XP: ${n}`, results:"← Resultados", requirements:"Requiere:", combo:xp=>`= ${xp} XP` }
+};
+function setTheme(theme){document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('mcf_theme', theme);}
+function toggleTheme(){ const cur=document.documentElement.getAttribute('data-theme')||'dark'; setTheme(cur==='dark'?'light':'dark'); }
+function setLang(lang){
+  window.__t = I18N[lang]||I18N.nl;
+  document.getElementById('search').placeholder = __t.search;
+  document.getElementById('toggleOwned').textContent = __t.only + ': ' + (onlyOwned?__t.on:__t.off);
+  document.getElementById('backResults').textContent = __t.results;
+  document.querySelectorAll('.lang').forEach(el=>el.classList.toggle('active', el.dataset.lang===lang));
+  localStorage.setItem('mcf_lang', lang);
+}
+function initLang(){ const u=new URL(location.href); const q=u.searchParams.get('lang'); const stored=localStorage.getItem('mcf_lang'); setLang(q||stored||'nl'); }
+
+const url = new URL(location.href);
+const OWNERS = (url.searchParams.get('owners') || localStorage.getItem('mcf_owners') || "").split(',').filter(Boolean);
+const API_KEY = localStorage.getItem('rarible_api_key') || "";
+const headers = { 'X-API-KEY': API_KEY };
+
+function pickPreview(meta){
+  if (!meta || !meta.content || !meta.content.length) return null;
+  const types=["PREVIEW","PORTRAIT","BIG","ORIGINAL"];
+  for (const rep of types){
+    const c = meta.content.find(x => x.representation===rep && x['@type']==='IMAGE' && x.url);
+    if (c) return c.url;
+  }
+  const any = meta.content.find(x => x.url);
+  return any ? any.url : null;
+}
+function tokenLink(itemId){ const p=String(itemId).split(':'); if(p.length<3) return '#'; return `https://rarible.com/token/polygon/${p[1]}:${p.slice(2).join(':')}`; }
+async function fetchJson(u){ const res=await fetch(u,{headers}); const t=await res.text(); let d; try{d=JSON.parse(t)}catch{d=t}; if(!res.ok) throw new Error(`HTTP ${res.status}: ${(d&&d.message)||t||res.statusText}`); return d; }
+async function fetchAllByOwner(owner){ const items=[]; try{ let cont; do{ const u=new URL('https://api.rarible.org/v0.1/items/byOwner'); u.searchParams.set('owner', `${OWNER_GROUP}:${owner}`); u.searchParams.set('blockchains','POLYGON'); u.searchParams.set('size','100'); if(cont) u.searchParams.set('continuation',cont); const d=await fetchJson(u); if(Array.isArray(d.items)) items.push(...d.items); cont=d.continuation||null; }while(cont); return items; }catch(e){} let cont; do{ const u=new URL('https://polygon-api.rarible.org/v0.1/nft/items/byOwner'); u.searchParams.set('owner', owner); u.searchParams.set('size','100'); if(cont) u.searchParams.set('continuation', cont); const d=await fetchJson(u); if(Array.isArray(d.items)) items.push(...d.items); cont=d.continuation||null; }while(cont); return items; }
+
+// rarity helpers
+function normalizeRarityValue(v){
+  if(!v) return null;
+  const s = String(v).trim().toLowerCase();
+  if (s === "exotic") return "exotic";
+  if (s === "legendary" || s === "legandary" || s === "legendery") return "legendary";
+  if (s === "epic") return "epic";
+  if (s === "rare") return "rare";
+  if (s === "common") return "common";
+  if (s === "basic") return "basic";
+  return null;
+}
+function findRarity(meta){
+  if(!meta) return null;
+  const direct = normalizeRarityValue(meta.rarity || meta.RARITY || meta.tier || meta.Tier);
+  if (direct) return direct;
+  const arrays = [meta.attributes, meta.traits, meta.properties, meta.Attributes, meta.Traits];
+  for (const arr of arrays) {
+    if (Array.isArray(arr)) {
+      for (const a of arr) {
+        const key = (a?.trait_type || a?.key || a?.type || a?.name || "").toString().toLowerCase();
+        const val = a?.value ?? a?.val ?? a?.display;
+        if (/rarity|tier/.test(key)) { const n = normalizeRarityValue(val); if (n) return n; }
+        if (/asset.?id|assetid/.test(key)) { const v = (val||'').toString().trim(); if (v) return null; } // noop
+      }
+    }
+  }
+  const obj = meta.properties || meta.attributes || meta.traits || {};
+  for (const [k,v] of Object.entries(obj)) { if (/rarity|tier/i.test(k)) { const n=normalizeRarityValue(v); if(n) return n; } }
+  return null;
+}
+
+// asset id helper
+
+// --- Licensor extraction (ported from results) ---
+function extractLicensors(meta) {
+  const res = new Set();
+  if (!meta) return Array.from(res);
+  const keys = ['licensor','Licensor','brand','Brand','ip','IP','franchise','Franchise','licensee','Licensee'];
+  for (const k of keys) {
+    const v = meta[k];
+    if (typeof v === 'string' && v.trim()) res.add(v.trim());
+  }
+  const arrays = [meta.attributes, meta.traits, meta.properties, meta.Attributes, meta.Traits];
+  for (const arr of arrays) {
+    if (Array.isArray(arr)) {
+      for (const a of arr) {
+        const key = (a?.trait_type || a?.key || a?.type || a?.name || "").toString();
+        const val = a?.value ?? a?.val ?? a?.display;
+        if (/licen[cs]or|brand|ip|franchise/i.test(key) && typeof val === 'string' && val.trim()) {
+          res.add(val.trim());
+        }
+      }
+    } else if (arr && typeof arr === 'object') {
+      for (const [k,v] of Object.entries(arr)) {
+        if (/licen[cs]or|brand|ip|franchise/i.test(k) && typeof v === 'string' && v.trim()) {
+          res.add(v.trim());
+        }
+      }
+    }
+  }
+  return Array.from(res);
+}
+
+// Prefer lower mint/serial/token numbers when choosing items
+function getMintNum(it){
+  try{
+    const m = it && it.meta ? it.meta : {};
+    let n = null;
+
+    // From id 'chain:contract:tokenId[:something]'
+    const parts = String(it.id||'').split(':');
+    if (parts.length >= 3 && /^\d+$/.test(parts[2])) n = parseInt(parts[2],10);
+
+    // Direct fields
+    if (n==null && m.tokenId && !isNaN(+m.tokenId)) n = parseInt(m.tokenId,10);
+    if (n==null && m.token_id && !isNaN(+m.token_id)) n = parseInt(m.token_id,10);
+
+    // Attributes/traits common patterns
+    const arrays = [m.attributes, m.traits, m.properties, m.Attributes, m.Traits];
+    outer: for (const arr of arrays){
+      if (Array.isArray(arr)){
+        for (const a of arr){
+          const key = (a?.trait_type || a?.key || a?.type || a?.name || '').toString().toLowerCase();
+          const val = a?.value ?? a?.val ?? a?.display;
+          if (/(mint|serial|edition|token)/.test(key) && (typeof val === 'string' || typeof val === 'number')) {
+            const mnum = String(val).match(/\d+/);
+            if (mnum){ n = parseInt(mnum[0],10); break outer; }
+          }
+        }
+      } else if (arr && typeof arr === 'object'){
+        for (const [k,v] of Object.entries(arr)){
+          if (/(mint|serial|edition|token)/i.test(k) && (typeof v === 'string' || typeof v === 'number')){
+            const mnum = String(v).match(/\d+/);
+            if (mnum){ n = parseInt(mnum[0],10); break outer; }
+          }
+        }
+      }
+    }
+
+    // From name like "... #1234"
+    if (n==null){
+      const nm = (m.name || '') + ' ' + (m.description || '');
+      const mm = /#(\d+)/.exec(nm);
+      if (mm) n = parseInt(mm[1],10);
+    }
+
+    return (typeof n === 'number' && isFinite(n)) ? n : Number.POSITIVE_INFINITY;
+  }catch(e){ return Number.POSITIVE_INFINITY; }
+}
+function findAssetId(meta){
+  if(!meta) return null;
+  const arrs = [meta.attributes, meta.traits, meta.properties, meta.Attributes, meta.Traits];
+  const keys = [/^asset.?id$/i, /^assetid$/i, /^asset$/i, /^code$/i, /^sku$/i, /^mc.*asset.*id$/i];
+  for (const arr of arrs){
+    if (Array.isArray(arr)){
+      for (const a of arr){
+        const k = (a?.trait_type || a?.key || a?.type || a?.name || "").toString();
+        const v = a?.value ?? a?.val ?? a?.display ?? a?.code ?? a?.id;
+        if (keys.some(rx => rx.test(k))){
+          const s = (v||"").toString().trim();
+          if (s) return s.toUpperCase();
+        }
+      }
+    } else if (arr && typeof arr === 'object'){
+      for (const [k,v] of Object.entries(arr)){
+        if (keys.some(rx => rx.test(k))){
+          const s = (v||"").toString().trim();
+          if (s) return s.toUpperCase();
+        }
+      }
+    }
+  }
+  // direct properties
+  const directKeys = ["assetId","asset_id","assetID","Asset ID","asset","code","sku"];
+  for (const k of directKeys){
+    const v = meta[k];
+    if (v){ const s = String(v).trim(); if (s) return s.toUpperCase(); }
+  }
+  // fallback: scan name/description for 6-10 uppercase alphanumerics after 'Asset ID' or standalone
+  const texts = [meta.name, meta.description, meta.summary, JSON.stringify(meta)];
+  for (const t of texts){
+    if (!t) continue;
+    const str = String(t);
+    // pattern: 'Asset ID: XXXXXXXX' OR any 6-10 all-caps code word
+    let m = str.match(/Asset\s*ID\s*[:#-]?\s*([A-Z0-9]{6,10})/i);
+    if (m) return m[1].toUpperCase();
+    m = str.match(/\b([A-Z0-9]{6,10})\b/g);
+    if (m){
+      // pick the first that isn't common word and contains a letter
+      const stop = new Set(["NFT","MINT","TOKEN","CLASSIC","SIGNED","BLACK","WHITE","BATMAN","TODD","MCFARLANE","YEAR","TWO","RED"]);
+      for (const cand of m){
+        if (/[A-Z]/.test(cand) && !stop.has(cand)) return cand.toUpperCase();
+      }
+    }
+  }
+  return null;
+}
+
+// requirement matching
+function labelRegex(label){
+  let s=String(label).trim()
+    .replace(/\s*\+\s*/g,' + ')
+    .replace(/\s*&\s*/g,'\\s*&\\s*')
+    .replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  s=s.replace(/B\\s*&\\s*W/g,'(?:B\\s*&\\s*W|B&W)');
+  return new RegExp(s,'i');
+}
+function reqToRegex(req){ if(req.any) return req.any.map(labelRegex); if(req.label) return [labelRegex(req.label)]; return [/.^/]; }
+function chipText(req){
+  // Build rarity pills (colored)
+  const rarList = req && req.rarity ? (Array.isArray(req.rarity) ? req.rarity : [req.rarity]) : [];
+  const rarHTML = rarList.map(r => {
+    const key = String(r).toLowerCase().replace(/[^a-z]/g,'');
+    const label = key ? (key.charAt(0).toUpperCase() + key.slice(1)) : '?';
+    return `<span class="rarity ${key}">${label}</span>`;
+  }).join('');
+
+  // Contracts -> short chip(s)
+  const contracts = (req && (req.contracts || (req.contract ? [req.contract] : []))) || [];
+  const short = a => {
+    const s = String(a||'').toLowerCase();
+    return s ? s.slice(0,6) + '…' + s.slice(-4) : '';
+  };
+  const contractHTML = contracts.length ? `<span class="chip contract"><code>${short(contracts[0])}</code></span>` : '';
+
+  // Optional asset filter label
+  const asset = req && (req.asset || (Array.isArray(req.assets) && req.assets[0]));
+  const assetHTML = asset ? `<span class="chip asset">${String(asset).toUpperCase()}</span>` : '';
+
+  return [rarHTML, contractHTML, assetHTML].filter(Boolean).join(' ');
+}
+function matchReqOnItem(req,it){
+  const parts=String(it.id).split(':');
+  const contract=(parts.length>=2?parts[1]:'').toLowerCase();
+  const r=findRarity(it.meta);
+  const assetId = findAssetId(it.meta);
+  if(req.contract || req.contracts || req.rarity || req.asset || req.assets){
+    if(req.contract && contract!==String(req.contract).toLowerCase()) return false;
+    if(req.contracts && !req.contracts.map(s=>s.toLowerCase()).includes(contract)) return false;
+    if(req.rarity){
+      const arr = Array.isArray(req.rarity)?req.rarity:[req.rarity];
+      const norm = arr.map(x=>normalizeRarityValue(x));
+      if(!norm.includes(r)) return false;
+    }
+    if(req.asset || req.assets){
+      const list = (req.assets || [req.asset]).filter(Boolean).map(s=>String(s).toUpperCase());
+      if(!assetId || !list.includes(assetId)) return false;
+    }
+    if(req.tokenIds){
+      const tid=parts.slice(2).join(':');
+      if(!req.tokenIds.map(String).includes(tid)) return false;
+    }
+    if(req.label){
+      const nm=(it.meta && it.meta.name) || String(it.id);
+      if(!labelRegex(req.label).test(nm)) return false;
+    }
+    return true;
+  }
+  const regs=reqToRegex(req);
+  const nm=(it.meta && it.meta.name) || String(it.id);
+  return regs.some(g=>g.test(nm));
+}
+
+// compute combos (unique items per requirement per combo)
+function computeSetState(def,items){
+  const reqs=def.req;
+  const matches = reqs.map(req => items.filter(it => matchReqOnItem(req,it)).sort((a,b)=>getMintNum(a)-getMintNum(b) || String(a.id).localeCompare(String(b.id))));
+  const used=new Set(); const combos=[];
+  while(true){
+    const pick=[];
+    for(let i=0;i<reqs.length;i++){
+      const arr=matches[i].filter(it=>!used.has(it.id) && !pick.some(p=>p.id===it.id));
+      if(arr.length===0){ return { combos }
+// progress helper
+function computeProgress(def, inv){
+  try{
+    const req = def.req || [];
+    let ownedSlots = 0;
+    for(const r of req){
+      if (inv && inv.some(it => matchReqOnItem(r,it))) ownedSlots++;
+    }
+    return { ownedSlots, total: req.length };
+  }catch(e){
+    return { ownedSlots: 0, total: (def && def.req ? def.req.length : 0) };
+  }
+}
+; }
+      pick.push(arr[0]);
+    }
+    combos.push(pick);
+    pick.forEach(it=>used.add(it.id));
+  }
+}
+
+// --- SETS defs (with your mappings; can add assets later) ---
+const SETS = [
+  {cat:"TWD", name:"TWD DARYL DIXON SET", xp:20, req:[
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"rare"},
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"epic"}
+  ]},
+  {cat:"TWD", name:"TWD DARYL DIXON SUPER SET", xp:35, req:[
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"rare"},
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"epic"},
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"legendary"}
+  ]},
+  {cat:"BRZRKR", name:"BRZRKR", xp:55, req:[
+    {contract:"0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", rarity:"rare"},
+    {contract:"0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", rarity:"epic"}
+  ]},
+  {cat:"DC", name:"BATMAN YEAR TWO SET", xp:20, req:[
+    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"rare"},
+    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"epic"},
+    {contract:"0x0fd66c55e5861129376f207b59d71aacb1b0cc4f", rarity:"rare"}
+  ]},
+  {cat:"DC", name:"BATMAN BY TODD McFARLANE SET", xp:40, req:[
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"epic"},
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"BATMAN BY TODD McFARLANE SUPER SET", xp:55, req:[
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"epic"},
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"legendary"},
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"exotic"}
+  ]},
+  {cat:"DC", name:"WAVE 1 GREEN LANTERN B.A.F SET", xp:40, req:[
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"common"},
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"epic"},
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 1 BATMAN B.A.F SET", xp:40, req:[
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"common"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"epic"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 1 AQUAMAN B.A.F SET", xp:40, req:[
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"common"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"epic"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 1 COMMON B.A.F SET", xp:40, req:[
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"common"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"common"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"common"}
+  ]},
+  {cat:"DC", name:"WAVE 1 EPIC B.A.F SET", xp:40, req:[
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"epic"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"epic"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"epic"}
+  ]},
+  {cat:"DC", name:"WAVE 1 LEGENDARY B.A.F SET", xp:55, req:[
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"legendary"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"legendary"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 2 GREEN ARROW B.A.F SET", xp:40, req:[
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"common"},
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"epic"},
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 2 SUPERMAN B.A.F SET", xp:40, req:[
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"common"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"epic"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 2 THE ATOM B.A.F SET", xp:40, req:[
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"common"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"epic"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 2 COMMON B.A.F SET", xp:40, req:[
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"common"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"common"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"common"}
+  ]},
+  {cat:"DC", name:"WAVE 2 EPIC B.A.F SET", xp:40, req:[
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"epic"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"epic"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"epic"}
+  ]},
+  {cat:"DC", name:"WAVE 2 LEGENDARY B.A.F SET", xp:55, req:[
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"legendary"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"legendary"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 3 ROBIN OF EARTH -2 B.A.F SET", xp:40, req:[
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"common"},
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"epic"},
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 3 THE JOKER SILVER AGE B.A.F SET", xp:40, req:[
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"common"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"epic"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 3 THE FLASH SPEED FORCE B.A.F SET", xp:40, req:[
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"epic"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 3 COMMON B.A.F SET", xp:40, req:[
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"common"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"common"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"}
+  ]},
+  {cat:"DC", name:"WAVE 3 EPIC B.A.F SET", xp:40, req:[
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"epic"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"epic"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"epic"}
+  ]},
+  {cat:"DC", name:"WAVE 3 LEGENDARY B.A.F SET", xp:55, req:[
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"legendary"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"legendary"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 4 DR FATE B.A.F SET 40", xp:40, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"common"},
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"epic"},
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"legendary"}
+]},
+{cat:"DC", name:"WAVE 4 SUPERMAN SILVER AGE B.A.F SET 40", xp:40, req:[
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"common"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"epic"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"legendary"}
+]},
+{cat:"DC", name:"WAVE 4 TWO-FACE SILVER AGE SET 40", xp:40, req:[
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"common"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"epic"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"legendary"}
+]},
+{cat:"DC", name:"WAVE 4 COMMON B.A.F SET 40", xp:40, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"common"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"common"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"common"}
+]},
+{cat:"DC", name:"WAVE 4 EPIC B.A.F SET 40", xp:40, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"epic"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"epic"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"epic"}
+]},
+{cat:"DC", name:"WAVE 4 LEGENDARY B.A.F SET 55", xp:55, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"legendary"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"legendary"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"legendary"}
+]}
+];
+
+// derive requiredContracts from SETS for permissive filtering
+const REQUIRED_CONTRACTS = Array.from(new Set(SETS.flatMap(def => (def.req||[]).map(r => r.contract)))).map(a => String(a||'').toLowerCase()).filter(Boolean);
+
+const statusEl=document.getElementById('status'); const grid=document.getElementById('grid');
+let onlyOwned=false, inventory=[], sets=[];
+
+function renderGrid(){
+  grid.innerHTML='';
+  const q=(document.getElementById('search').value||'').trim().toLowerCase();
+  let filtered=sets.filter(s => s.def.name.toLowerCase().includes(q) || s.def.cat.toLowerCase().includes(q));
+  if(onlyOwned) filtered=filtered.filter(s=> s.combos.length > 0 );
+  const frag=document.createDocumentFragment(); let xpTotal=0;
+  for(const s of filtered){
+    const {def,combos,thumb}=s; const earned = combos.length*def.xp; xpTotal+=earned;
+    const card=document.createElement('article'); card.className='card';
+    const reqChips = def.req.map(r => {
+      const rlist = r.rarity ? (Array.isArray(r.rarity) ? r.rarity : [r.rarity]) : [];
+      if (rlist.length) {
+        return rlist.map(x => {
+          const key = String(x).toLowerCase();
+          const cls = key.replace(/[^a-z]/g,'');
+          const label = key.charAt(0).toUpperCase() + key.slice(1);
+          return `<span class="rarity ${cls}">${label}</span>`;
+        }).join('');
+      }
+      return '';
+    }).join('');
+    const assetBadge = s.sampleAsset ? `<div class="assetBadge">${s.sampleAsset}</div>` : "";
+const cat = deriveCat(def);
+    card.innerHTML = `
+      ${assetBadge}
+      <div class="cat pill">${cat}</div>
+      <div class="media">${thumb?`<img alt="" src="${thumb}">`:'<div style="opacity:.5;padding:30px;">(no preview)</div>'}</div>
+      <div class="body">
+        <div class="name">${def.name}</div>
+        <div class="chips">${reqChips}</div>
+        <div class="kpi">
+          <span class="pill">XP: ${def.xp}</span>
+          <span class="pill">Completes: ${combos.length}</span>
+          <span class="pill">Earned: ${earned}</span>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <a href="#" class="btn">Details</a>
+        </div>
+      </div>`;
+    card.querySelector('a.btn').addEventListener('click',(e)=>{e.preventDefault();openDetail(s);});
+    frag.appendChild(card);
+  }
+  grid.appendChild(frag);
+  document.getElementById('badgeAll').textContent = "Sets: " + filtered.length;
+  document.getElementById('badgeEarned').textContent = "XP: " + xpTotal;
+}
+
+function openDetail(s){
+  const dlg=document.getElementById('dlg');
+  const esc=(t)=>String(t).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+
+  // remember picked combo per set
+  window.__SET_SELECTIONS = window.__SET_SELECTIONS || {};
+  const selMap = window.__SET_SELECTIONS;
+  const key = s.def.name;
+  const selectedIds = new Set((selMap[key]||[]).map(x=>String(x)));
+
+  document.getElementById('dlgTitle').textContent=s.def.name;
+  document.getElementById('dlgSub').textContent=s.def.cat;
+  document.getElementById('dlgReqs').innerHTML = s.def.req.map(r => chipText(r)).join('');
+
+  const rows=document.getElementById('dlgRows'); rows.innerHTML='';
+
+  const renderComboLine = (combo) => {
+    const esc = (t)=>String(t).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    const parts = combo.map(it=>{
+      const nm=(it.meta&&it.meta.name)||String(it.id);
+      const rar=normalizeRarityValue(findRarity(it.meta))||'?';
+      return `<a href="${tokenLink(it.id)}" target="_blank">${esc(nm)}</a> ${rar && rar!=='?' ? `<span class="rarity ${String(rar).toLowerCase().replace(/[^a-z]/g,'')}">${String(rar).charAt(0).toUpperCase()+String(rar).slice(1).toLowerCase()}</span>` : '<span class="chip missing">?</span>'}`;
+    });
+    const line=document.createElement('div'); line.className='row';
+    line.innerHTML=parts.join(' + ') + ' <strong>= ' + s.def.xp + ' XP</strong>';
+    rows.appendChild(line);
+  };
+
+  for (const combo of s.combos) renderComboLine(combo);
+  if (!s.combos.length) {
+    rows.appendChild(Object.assign(document.createElement('div'),{className:'muted',textContent:'No combinations found with your inventory.'}));
+  }
+
+  // Partials: only exclude selected ids (you can reuse while not chosen)
+  try{
+    const reqs=s.def.req;
+    const usedIds = new Set((s.combos||[]).flat().map(it=>String(it.id)));
+  const matchesBySlot = reqs.map(r => inventory.filter(it => matchReqOnItem(r,it) && !usedIds.has(String(it.id))).sort((a,b)=>getMintNum(a)-getMintNum(b)));
+    const _haveAny = matchesBySlot.some(arr => (arr && arr.length >= ALMOST_MIN_PER_SLOT));
+    if (_haveAny) {
+      const sep=document.createElement('div'); sep.className='muted'; sep.style.marginTop='10px'; sep.textContent=`Almost there (beste kandidaten; per slot ≥ ${ALMOST_MIN_PER_SLOT}):`; rows.appendChild(sep);
+      const parts=[];
+      for (let j=0;j<reqs.length;j++){
+        const arr=matchesBySlot[j]||[];
+        if (arr.length){
+          const it=arr[0];
+          const nm=(it.meta&&it.meta.name)||String(it.id);
+          const rar=normalizeRarityValue(findRarity(it.meta))||'?';
+          parts.push(`<a href="${tokenLink(it.id)}" target="_blank">${esc(nm)}</a> ${rar && rar!=='?' ? `<span class="rarity ${String(rar).toLowerCase().replace(/[^a-z]/g,'')}">${String(rar).charAt(0).toUpperCase()+String(rar).slice(1).toLowerCase()}</span>` : '<span class="chip missing">?</span>'}`);
+        } else {
+          parts.push('<span class="chip missing">?</span>');
+        }
+      }
+      const line=document.createElement('div'); line.className='row'; line.innerHTML=parts.join(' + ') + ' <span class="muted">= 0 XP</span>';
+      rows.appendChild(line);
+
+      // Alternates per slot
+      let shown=0;
+      for (let j=0;j<reqs.length && shown<4;j++){
+        const arr=matchesBySlot[j]||[];
+        for (let k=1;k<arr.length && shown<4;k++){
+          const it=arr[k];
+          const nm=(it.meta&&it.meta.name)||String(it.id);
+          const rar=normalizeRarityValue(findRarity(it.meta))||'?';
+          const alt=[];
+          for (let x=0;x<reqs.length;x++){
+            alt.push(x===j ? `<a href="${tokenLink(it.id)}" target="_blank">${esc(nm)}</a> ${rar && rar!=='?' ? `<span class="rarity ${String(rar).toLowerCase().replace(/[^a-z]/g,'')}">${String(rar).charAt(0).toUpperCase()+String(rar).slice(1).toLowerCase()}</span>` : '<span class="chip missing">?</span>'}` : '<span class="chip missing">?</span>');
+          }
+          const ex=document.createElement('div'); ex.className='row'; ex.innerHTML=alt.join(' + ') + ' <span class="muted">= 0 XP</span>';
+          rows.appendChild(ex); shown++;
+        }
+      }
+    }
+  }catch(e){ console.warn('partials render failed', e); }
+
+  const count = s.combos.length;
+  document.getElementById('dlgXP').textContent=`XP: ${s.def.xp} × ${count} = ${s.def.xp*count}`;
+
+  dlg.showModal();
+}
+
+
+
+// --- Details modal + i18n (sets) ---
+const MCF_LANG = (localStorage.getItem('mcf_lang') || new URL(location.href).searchParams.get('lang') || 'nl').toLowerCase();
+const I18N_DETAILS = {
+  nl: { details: 'Details', metadata: 'Metadata', attributes: 'Eigenschappen', contract: 'Contract', token_id: 'Token ID', close: 'Sluiten', description: 'Beschrijving', collection: 'Collectie', chain: 'Blockchain', external: 'Externe link', raw: 'Ruwe JSON', copy: 'Kopieer', copied: 'Gekopieerd' },
+  en: { details: 'Details', metadata: 'Metadata', attributes: 'Attributes', contract: 'Contract', token_id: 'Token ID', close: 'Close', description: 'Description', collection: 'Collection', chain: 'Chain', external: 'External link', raw: 'Raw JSON', copy: 'Copy', copied: 'Copied' },
+  es: { details: 'Detalles', metadata: 'Metadatos', attributes: 'Atributos', contract: 'Contrato', token_id: 'Token ID', close: 'Cerrar', description: 'Descripción', collection: 'Colección', chain: 'Cadena', external: 'Enlace externo', raw: 'JSON sin procesar', copy: 'Copiar', copied: 'Copiado' }
+};
+const T_DET = I18N_DETAILS[MCF_LANG] || I18N_DETAILS.nl;
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function normalizeAttributes(meta){
+  let attrs = meta.attributes || meta.traits || meta.properties || meta.Attributes;
+  if (!attrs) return [];
+  if (attrs && typeof attrs === 'object' && !Array.isArray(attrs)) {
+    return Object.keys(attrs).map(k => ({ label: k, value: (typeof attrs[k] === 'object') ? JSON.stringify(attrs[k]) : String(attrs[k]) }));
+  }
+  if (Array.isArray(attrs)) {
+    return attrs.map(a => ({ label: a.trait_type || a.trait || a.key || a.type || a.name || '—', value: (a.value != null ? a.value : (a.display_type != null ? a.display_type : '')) }));
+  }
+  return [];
+}
+
+function showDetails(payload){
+  const modal = document.getElementById('detailModal');
+  const body  = document.getElementById('detailBody');
+  const title = document.getElementById('detailTitle');
+  const btnX  = document.getElementById('detailClose');
+
+  const meta = (payload && payload.meta) || {};
+  const collection = (meta.collection && (meta.collection.name || meta.collection.title)) || meta.collection_name || (meta.contract && meta.contract.name) || '';
+  const description = meta.description || '';
+  const external = meta.external_url || meta.external_link || '';
+  const imageUrl = meta.image || meta.image_url || '';
+  const chain = (typeof CHAIN !== 'undefined' ? CHAIN : (payload.chain || ''));
+
+  title.textContent = T_DET.details + ' – ' + (payload.name || payload.id || '—');
+
+  const copyBtn = (value) => `<button class="copybtn" data-copy="${encodeURIComponent(value)}">${T_DET.copy}</button>`;
+  const cRow = (label, val, actions='') => `<tr><th>${label}</th><td>${val}${actions}</td></tr>`;
+
+  const rows = [];
+  rows.push(cRow(T_DET.contract, esc(payload.contract||''), copyBtn(payload.contract||'')));
+  rows.push(cRow(T_DET.token_id, esc(payload.tokenId||''), copyBtn(payload.tokenId||'')));
+  if (collection) rows.push(cRow(T_DET.collection, esc(collection)));
+  if (chain) rows.push(cRow(T_DET.chain, esc(chain)));
+  if (external) rows.push(cRow(T_DET.external, `<a href="${esc(external)}" target="_blank" rel="noreferrer">${esc(external)}</a>`));
+
+  const headCard = `<div class="meta-card"><table class="meta-table">${rows.join('')}</table>${description?`<p style="margin:8px 0 0;">${esc(description)}</p>`:''}</div>`;
+
+  const norm = normalizeAttributes(meta);
+  const attrsCard = (norm.length)
+    ? `<div class="meta-card"><h4 style="margin:0 0 8px;">${T_DET.attributes}</h4>
+         <table class="meta-table">` +
+         norm.map(a => `<tr><th>${esc(a.label)}</th><td>${esc(a.value)}</td></tr>`).join('')
+       + `</table></div>`
+    : '';
+
+  const jsonCard = `<details class="meta-toggle"><summary>${T_DET.raw}</summary><pre>${esc(JSON.stringify(meta, null, 2))}</pre></details>`;
+  const imgCard = imageUrl ? `<div class="preview"><img alt="" src="${esc(imageUrl)}"></div>` : '';
+
+  const gridClass = imageUrl ? 'meta-grid has-image' : 'meta-grid';
+  body.innerHTML = `<div class="${gridClass}"><div class="meta-col">${headCard}${attrsCard}${jsonCard}</div>${imageUrl ? `<div class="meta-col">${imgCard}</div>` : ''}</div>`;
+
+  modal.classList.remove('hidden');
+  btnX.onclick = () => modal.classList.add('hidden');
+  const backdrop = modal.querySelector('.modal-backdrop');
+  if (backdrop) backdrop.onclick = () => modal.classList.add('hidden');
+
+  body.querySelectorAll('.copybtn').forEach(b => {
+    b.addEventListener('click', () => {
+      const val = decodeURIComponent(b.getAttribute('data-copy')||'');
+      if (navigator.clipboard) { navigator.clipboard.writeText(val).catch(()=>{}); }
+      b.textContent = T_DET.copied; setTimeout(()=> b.textContent = T_DET.copy, 1000);
+    });
+  });
+
+  document.addEventListener('keydown', function escClose(ev){
+    if(ev.key==='Escape'){
+      modal.classList.add('hidden');
+      document.removeEventListener('keydown', escClose);
+    }
+  });
+}
+
+// Event delegation for details buttons
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('.btn-details');
+  if(!b) return;
+  ev.preventDefault();
+  try {
+    const payload = JSON.parse(decodeURIComponent(b.getAttribute('data-payload')));
+    showDetails(payload);
+  } catch(e){ console.error('Invalid details payload', e); }
+});
+
+
+// --- Auto category derivation for set tiles ---
+
+
+function deriveCat(def){
+  try {
+    // 1) Prefer explicit contract→licensor mapping
+    const licByMap = licensorsFromReq(def).map(s => s.toLowerCase());
+    if (licByMap.length > 1) return 'Mixed';
+    if (licByMap.length === 1) {
+      const l = licByMap[0];
+      if (/\bdc\b|dc comics|batman|superman|joker|harley|wonder\s*woman/.test(l)) return 'DC';
+      if (/brzrkr/.test(l)) return 'BRZRKR';
+      if (/walking\s*dead|twd/.test(l)) return 'TWD';
+      return licensorsFromReq(def)[0]; // return original-cased label
+    }
+
+    // 2) Fallback: try real metadata-derived licensors (if items are present on page)
+    const licSet = new Set();
+    if (Array.isArray(window.__ALL_ITEMS__)) {
+      for (const it of window.__ALL_ITEMS__) {
+        for (const r of (def.req || [])) {
+          try {
+            if (matchReqOnItem(r, it)) {
+              (extractLicensors && extractLicensors(it.meta) || []).forEach(n => licSet.add(n));
+              break;
+            }
+          } catch(_) {}
+        }
+      }
+    }
+    const licList = Array.from(licSet).map(s => s.toLowerCase());
+    if (licList.length > 1) return 'Mixed';
+    if (licList.length === 1) {
+      const l = licList[0];
+      if (/\bdc\b|dc comics|batman|superman|joker|harley|wonder\s*woman/.test(l)) return 'DC';
+      if (/brzrkr/.test(l)) return 'BRZRKR';
+      if (/walking\s*dead|twd/.test(l)) return 'TWD';
+      return Array.from(licSet)[0];
+    }
+
+    // 3) Fallback: contract uniqueness
+    const uniq = Array.from(new Set((def.req||[]).map(r => (r.contract||'').toLowerCase()).filter(Boolean)));
+    if (uniq.length > 1) return 'Mixed';
+
+    // 4) Last resort: name heuristics
+    const name = String(def.name||'').toLowerCase();
+    if (/\bbrzrkr\b/.test(name)) return 'BRZRKR';
+    if (/twd|walking\s*dead/.test(name)) return 'TWD';
+    if (/dc|batman|superman|joker|harley|wonder\s*woman/.test(name)) return 'DC';
+
+    return def.cat || '—';
+  } catch(e){ console.warn('deriveCat failed', e); return def.cat || '—'; }
+}
+
+async function boot(){
+  initLang();
+  const savedTheme=localStorage.getItem('mcf_theme')||'dark'; setTheme(savedTheme);
+  document.getElementById('themeBtn').addEventListener('click',toggleTheme);
+  document.querySelectorAll('.lang').forEach(el=>el.addEventListener('click',()=>setLang(el.dataset.lang)));
+  document.getElementById('search').addEventListener('input',renderGrid);
+  document.getElementById('toggleOwned').addEventListener('click',()=>{onlyOwned=!onlyOwned; document.getElementById('toggleOwned').textContent=(__t.only+': '+(onlyOwned?__t.on:__t.off)); renderGrid();});
+  document.getElementById('backResults').addEventListener('click',(e)=>{e.preventDefault(); const u=new URL('results.html',location.href); if(OWNERS&&OWNERS.length) u.searchParams.set('owners',OWNERS.join(',')); open(u.toString(),'_self');});
+  document.getElementById('dlgClose').addEventListener('click',()=>document.getElementById('dlg').close());
+
+  if(!API_KEY || !OWNERS.length){ document.getElementById('status').textContent="Missing API key or owners."; return; }
+  document.getElementById('status').textContent="Loading…";
+
+  let collected=[];
+  for(const o of OWNERS){ try{ const it=await fetchAllByOwner(o); collected.push(...it);}catch(e){console.warn(e);}}
+
+  const wl = new Set(CONTRACTS.map(s=>s.toLowerCase()));
+  const required = new Set(SETS.flatMap(s => s.req.flatMap(r => (r.contract?[r.contract]:(r.contracts||[]))))
+                        .map(a => String(a||'').toLowerCase()).filter(Boolean));
+
+  inventory = collected.filter(it=>{
+    const id=String(it.id); const p=id.split(':');
+    const chainOk=(it.blockchain && it.blockchain.toUpperCase()==='POLYGON') || id.toUpperCase().startsWith('POLYGON:'.toUpperCase());
+    const contract=(p.length>=2?p[1]:'').toLowerCase();
+    if(!chainOk) return false;
+    if(wl.size===0 && required.size===0) return true;
+    return wl.has(contract) || required.has(contract);
+  }).map(it=>({ id: it.id, meta: it.meta, preview: pickPreview(it.meta) }));
+
+  sets = SETS.map(def=>{
+    const state = computeSetState(def, inventory);
+    let thumb=null;
+    if(state.combos.length && state.combos[0][0]){
+      thumb=pickPreview(state.combos[0][0].meta);
+      sSampleAsset = findAssetId(state.combos[0][0].meta);
+    }
+    if(!thumb){
+      outer: for(const req of def.req){ for(const it of inventory){ if(matchReqOnItem(req,it)){ thumb = pickPreview(it.meta); if(thumb) break outer; } } }
+    }
+    return { def, combos: state.combos, thumb, sampleAsset: null };
+  });
+
+  renderGrid();
+  document.getElementById('status').textContent="";
+}
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>

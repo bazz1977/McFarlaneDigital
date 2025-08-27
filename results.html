@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="nl" data-app-version="v1.9.7">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unofficial McFarlane Fan Hub – Results (v1.9.7)</title>
+  <style>
+    :root {
+      --bg: #0b0c10; --panel: #0f1117; --muted: #9aa4b2; --text: #e8ecf1; --brand: #7f5af0;
+      --line: rgba(255,255,255,.08); --chip: #141824; --chip-line: rgba(255,255,255,.12);
+      --btn: #5161f5; --btn-hover: #5f6efd;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    
+  --rarity-common: #ffffff;
+  --rarity-rare: #10b981;
+  --rarity-epic: #2fb3ff;
+  --rarity-legendary: #ef4444;
+  --rarity-exotic: #fbbf24;}
+    [data-theme="light"] {
+      --bg: #f6f7fb; --panel: #ffffff; --muted: #5c6675; --text: #0b0c10; --brand: #6a4df4;
+      --line: rgba(0,0,0,.08); --chip: #f0f2f7; --chip-line: rgba(0,0,0,.1);
+      --btn: #4455f5; --btn-hover: #5262ff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); transition: background .2s ease, color .2s ease; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 14px; }
+    .top { display:grid; grid-template-columns: 1fr auto; gap: 10px; align-items:center; }
+    .title { font-weight: 700; display:flex; align-items:center; gap:8px; }
+    .pill { background: var(--chip); border: 1px solid var(--chip-line); padding: 4px 10px; border-radius: 999px; font-size: 12px; color:#cbd3dc; }
+    .controls { display:grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items:center; margin-top:8px; }
+    .search { width:100%; min-width:240px; padding:10px 12px; border-radius:10px; border:1px solid #1a2030; background:#0e1116; color:var(--text); }
+    [data-theme="light"] .search { background:#f6f8ff; border-color:#e5e8f4; }
+    .actions { display:flex; gap:8px; align-items:center; justify-self: end; }
+    .lang, .theme { width: 32px; height: 32px; border-radius: 8px; background: var(--chip); border:1px solid var(--chip-line); display:grid; place-items:center; cursor:pointer; }
+    .lang.active { outline: 2px solid var(--brand); }
+    .filters { display:flex; gap:8px; flex-wrap: wrap; align-items:center; }
+    .filterbtn { padding:8px 10px; border-radius:10px; border:1px solid var(--chip-line); background:var(--chip); color:var(--text); cursor:pointer; }
+    .panelpop { position: absolute; margin-top:6px; background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px; max-height:260px; overflow:auto; box-shadow: 0 10px 30px rgba(0,0,0,.25); display:none; z-index:20; }
+    .panelpop h4 { margin:4px 0 8px; font-size:.9rem; }
+    .panelpop .opt { display:flex; align-items:center; gap:8px; padding:6px 6px; border-radius:8px; }
+    .panelpop .opt:hover { background: rgba(255,255,255,.04); }
+    .chips { display:flex; gap:6px; flex-wrap: wrap; }
+    .chip { background: var(--chip); border:1px solid var(--chip-line); border-radius:999px; padding:4px 8px; font-size:.8rem; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+    .card { background:#111319; border:1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    [data-theme="light"] .card { background:#ffffff; }
+    .media { aspect-ratio:1/1; background:#0f1117; display:grid; place-items:center; }
+    [data-theme="light"] .media { background:#eef1fb; }
+    .media img { width:100%; height:100%; object-fit:cover; display:block; }
+    .body { padding:10px 12px 12px; }
+    .name { font-size:1rem; font-weight:700; margin:0 0 6px; display:-webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow:hidden; line-height:1.3; min-height:3.9em; }
+    .licensors { color:var(--muted); font-size:.78rem; display:-webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow:hidden; margin:4px 0 0; }
+    .muted { color:var(--muted); font-size:.82rem; }
+    a.btn { display:inline-block; padding:6px 8px; border-radius:8px; background:var(--btn); color:#fff; text-decoration:none; font-size:.8rem; }
+    .status { font-size:.9rem; color:var(--muted); justify-self:start; }
+    [data-theme="light"] [data-theme="light"] [data-theme="light"] [data-theme="light"] [data-theme="light"] [data-theme="light"] .xpchip { display:inline-block; padding:2px 8px; border-radius:999px; font-size:.78rem; border:1px solid var(--chip-line); background: var(--chip); color: var(--text); }
+    select.sort { padding:6px 8px; border-radius:8px; border:1px solid var(--chip-line); background:var(--chip); color:var(--text); }
+  
+.rarity { display:inline-flex; align-items:center; padding:3px 10px; min-height:26px;
+  border-radius:999px; font-size:12px; font-weight:600; line-height:1; border:1px solid transparent; color:#0b0c10; }
+.rarity.common { background: var(--rarity-common) !important; color:#0b0c10 !important; border-color:#e5e7eb; }
+.rarity.rare { background: var(--rarity-rare) !important; color:#0b0c10 !important; border-color:#0d9467; }
+.rarity.epic { background: var(--rarity-epic) !important; color:#0b0c10 !important; border-color:#1f8fd1; }
+.rarity.legendary { background: var(--rarity-legendary) !important; color:#0b0c10 !important; border-color:#b91c1c; }
+.rarity.exotic { background: var(--rarity-exotic) !important; color:#0b0c10 !important; border-color:#e0a912; }
+.rarity.basic { background:#2b2f36; color:#dfe4ec; border-color:#3a3f49; }
+
+
+/* Details modal */
+.modal { position:fixed; inset:0; display:none; z-index:70; }
+.modal:not(.hidden) { display:block; }
+.modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,.5); backdrop-filter: blur(2px); }
+.modal-card { position:relative; max-width:min(900px, 92vw); max-height:80vh; overflow:auto;
+  margin:6vh auto 0; background:var(--panel); border:1px solid var(--line); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.4); }
+.modal-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); }
+.modal-body { padding:16px; }
+.modal-body pre { white-space:pre-wrap; font-size:.85rem; background:var(--chip); border:1px solid var(--chip-line); border-radius:10px; padding:12px; }
+.modal .btn.close { background:transparent; border:1px solid var(--line); width:32px; height:32px; border-radius:8px; font-size:18px; line-height:1; }
+.meta-table { width:100%; border-collapse:collapse; margin-bottom:12px; }
+.meta-table th, .meta-table td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+.meta-badges { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+.badge { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid var(--chip-line); background:var(--chip); font-size:.8rem; }
+
+
+
+/* Details modal (enhanced) */
+.meta-grid { display:grid; grid-template-columns: 1fr; gap:16px; }
+.meta-grid.has-image { grid-template-columns: 1.15fr .85fr; }
+.meta-card { border:1px solid var(--line); background:var(--canvas); border-radius:12px; padding:12px; }
+.meta-table { width:100%; border-collapse:collapse; }
+.meta-table th, .meta-table td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+.meta-table th { width:160px; font-weight:600; color:var(--muted); }
+.meta-table tr:last-child th, .meta-table tr:last-child td { border-bottom:none; }
+.preview { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#000; }
+.preview img { width:100%; height:auto; display:block; }
+details.meta-toggle > summary { cursor:pointer; font-weight:600; list-style:none; }
+details.meta-toggle > summary::-webkit-details-marker { display:none; }
+details.meta-toggle { border:1px solid var(--line); background:var(--canvas); border-radius:12px; padding:10px 12px; }
+details.meta-toggle pre { margin-top:8px; white-space:pre-wrap; font-size:.85rem; background:var(--chip); border:1px solid var(--chip-line); border-radius:10px; padding:12px; }
+.copybtn { margin-left:8px; padding:2px 8px; border-radius:8px; border:1px solid var(--chip-line); background:var(--chip); font-size:.75rem; }
+button.btn { all: unset; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+</style>
+</head>
+<body>
+  <div id="detailModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="detailTitle">Details</h3>
+        <button id="detailClose" class="btn close" aria-label="Close">×</button>
+      </div>
+      <div id="detailBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="title">
+        McFarlane • <span id="t_results">Resultaten</span>
+        <span class="pill">Polygon</span>
+        <span class="pill" id="countBadge">—</span>
+        <span class="pill" id="xpBadge">XP: —</span>
+        <span class="pill" id="visibleBadge">—</span>
+        <span class="pill" id="xpVisibleBadge">XP vis.: —</span>
+      </div>
+      <div class="actions"><a id="setsBtn" class="theme" href="#" title="Sets">📚</a>
+        <div class="lang" data-lang="nl" title="Nederlands">🇳🇱</div>
+        <div class="lang" data-lang="en" title="English">🇬🇧</div>
+        <div class="lang" data-lang="es" title="Español">🇪🇸</div>
+        <button class="theme" id="themeBtn" title="Toggle theme">🌗</button>
+      </div>
+    </div>
+    <div class="controls">
+      <input id="search" class="search" placeholder="Zoek op naam/ID/contract…" />
+      <div class="filters">
+        <div style="position:relative;">
+          <button class="filterbtn" id="licBtn">Licensors ▾</button>
+          <div class="panelpop" id="licPanel">
+            <h4>Licensors</h4>
+            <div id="licOpts"></div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button class="filterbtn" id="licAll">Select all</button>
+              <button class="filterbtn" id="licClear">Clear</button>
+            </div>
+          </div>
+        </div>
+        <div class="chips" id="licChips"></div>
+      </div>
+      <div class="status" id="status">Bezig met laden…</div>
+    </div>
+    <div style="margin-top:8px; display:flex; gap:10px; align-items:center;">
+      <label class="muted">Sort: <select id="sort" class="sort">
+        <option value="default">Default</option>
+        <option value="rarity">Rarity (best first)</option>
+        <option value="name">Name (A→Z)</option>
+      </select></label>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+<script>
+const CHAIN = "POLYGON";
+const OWNER_GROUP = "ETHEREUM";
+const CONTRACTS = [
+  "0x0039650dc457f9b5002112fe1ee4c7895f5c14e2",
+  "0x00c0461804ffcca9db1bc9ffdb5050631f57c8e8",
+  "0x01d55cc5854d26af65dd7f4bcb0da44b76ac23e1",
+  "0x028ab77ff9794d2b02f11f77a01c7c2f96618916",
+  "0x02994090747138a15361560f943cc5fbfcff256d",
+  "0x049474b730f15d863e4b87c352fae7d5acc1197f",
+  "0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2",
+  "0x06780a1388a4c8c06267e3b2b881539bd652f2a8",
+  "0x0866e58f7faaa78b7bf709398c131586cedf0833",
+  "0x08d13b81502280b3e3b0ca09af7355fc55da24d5",
+  "0x0fd66c55e5861129376f207b59d71aacb1b0cc4f",
+  "0x10cddef1c416f3462b4f6a8ad7255adc1350339d",
+  "0x125ca8cfece0a950dd33cc7c9d4e132f72dc545a",
+  "0x186b4d896d3be406ba4868541f866eb58ad6373e",
+  "0x199d31c147a965ae1c2f899b5d6fa83b39e88cd8",
+  "0x19b2dfff394cac6bec13f1ab00723763c5b9b659",
+  "0x19f5dd4d1315adfcda911dbb811f9f1d129cf6ca",
+  "0x1a1ffebb38d7763d897c7f265c1afe48b41843b6",
+  "0x1b15a670992d7b2475ed9578ef962bdc22f753a6",
+  "0x1b79f3d95d9b449dd6a38d03cfa05f105a7b5457",
+  "0x227af9b628d578486a6d0f69b36d1de2d0ca900b",
+  "0x229f58f93d2607c54d0abcf899c807f1f3b40ab8",
+  "0x240a1d938d78c76ad8af1ce080858614da311636",
+  "0x2595b68c39f9f42f6d533f85fca4cdc6fff29a09",
+  "0x2879c5b410b82b4fb5e87d9527d3c2017fae0ff8",
+  "0x29dfefe0aecc0bc7e352f7776fc77b8a39b1155e",
+  "0x2aa7a00fdf555411882bc7802fcdda457942f797",
+  "0x2b3d922b71d5bb1d745859f8c2cfa00951bd382a",
+  "0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3",
+  "0x34b4f2c74541d370907cf8bd642a62cc8155ecf3",
+  "0x355879b619c53f4bc67c9778d4f1e4cc44c484a4",
+  "0x35b07bce9421e5d19b59a966aaf03e22b240d4d0",
+  "0x3818f05d6e3202848c073c76f5cb202c1d2c55f8",
+  "0x38abd666964fdbb32851cea3df7322facb246eac",
+  "0x398acb7ea6a9602a57d3eaec89588923b5235bc5",
+  "0x3ca89fcea0934efaadf2381906ca1cb004f8989d",
+  "0x3e7247dadddaab9917d5acc226e7aede855346ae",
+  "0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1",
+  "0x405147e7a29f275187be2b9674ffe7b455075235",
+  "0x416e40a2a56b89ade4374f48b491df7752daef1e",
+  "0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e",
+  "0x43248fc0a82b96ee59f9a10d8eabbde700b006f9",
+  "0x440de7e698321293111aa106ca05a613e6651366",
+  "0x44637ccc451be5e60183207596f722ce64b1fb7e",
+  "0x4867349931a547c47e3f4b4dffe7afa5c59b6174",
+  "0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f",
+  "0x49e85cf230477fbb438d6b800e8b4d9260a34f06",
+  "0x4a24d3cc908f3eb85fb30a0418c1b2f04cb0331e",
+  "0x4a73767ee7ef0fcda73dd194a37eb8fec1fa8240",
+  "0x4bdaf58712cf8c69fe619f32f373d541ea87a51a",
+  "0x4e4c5fcc39f6ff90a6e1862b354703c683bd07c5",
+  "0x503ccea5984975f057ce957a1cdca61dbd731405",
+  "0x5051775029610e48d325e65d6c5d56fe607bcc0d",
+  "0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c",
+  "0x50ed79948a280f38d11b5134295fb8064778cdbf",
+  "0x53247d58b7e1731a730773f5370f712867a22b5f",
+  "0x53be625557a2d9453bfefe9fe569984946eb7e8c",
+  "0x53c3d1b90b14044dee9f6cb1df602544b8f154a8",
+  "0x55e79461a5accca44f9a4744fe3215d593c79218",
+  "0x5604d1e3fa0347c652d27ae3091075b561a53699",
+  "0x5847dd7002f1874bf55dd8c1db95b0bbfea84a08",
+  "0x5beeee0a5630f90628cdf36d806ea06c9053b19c",
+  "0x5d666f215a85b87cb042d59662a7ecd2c8cc44e6",
+  "0x5f075c762e276a6527846427e66c75e89ef30091",
+  "0x636045ab763b493a80350bfbd08e038029056ae2",
+  "0x6514a84948e5a26f3fa34090c66b7dd687283f8d",
+  "0x651879523e831763519ab8df1d8cd6fa8c4c9937",
+  "0x6631a60056f02aa68015557ffbbc683d78987e79",
+  "0x66c207a6075075cf033973fb2fc0b469c1e20d1d",
+  "0x66fc5b74aa52565d62ada7f15cbe042a4999e22e",
+  "0x6803e9e8c9cbb318ecb97c505318fb500313043b",
+  "0x681f695eb7659d26b95f5ea3197e348af81450e8",
+  "0x6b2c6f1dec14f00d14d6f8f56dd52e2edabeffff",
+  "0x6b75497bd0a94b03353c69cd93317e2a3b9ac803",
+  "0x6dc606389aa3532ae50b4af4066ca8bfc984f964",
+  "0x7180b24b73495968acd96f700f0860599a75dc9e",
+  "0x727ae2af1a3f57f218e749ba4a041fee42483f76",
+  "0x79f1437646c048815a4187f598b877595f184592",
+  "0x7a768033aae19e13345686618bdcbf735e9b9a74",
+  "0x7cb3de1557bad446c25edb6fb519f2f186ed1589",
+  "0x81dc41d9c1c3b515dc367430497397b3e162ad2c",
+  "0x8732dbd44da56c7a4694bdecbc9dae4436c9b284",
+  "0x89696ef507b55741dc311733b7658fba5c8eea91",
+  "0x89ed4239d327856e31ae5194006a7c99e53babf3",
+  "0x8bc163742f67a4ceba6babcce6f3610b7927ce0a",
+  "0x8bcb47ba475fd7d52975a5c660750ad5e60a6281",
+  "0x8bd04639547c44d8832b0cd810415f66f4e3d4a4",
+  "0x98cbf6d430f1038ecbcc847dda4ea54ace8290a9",
+  "0x9924b923641deb3a1de544746317dec501347d41",
+  "0x9a4767252f3b40929bc579a9c6f3d140c0901af2",
+  "0x9c3d258be359b70b9c3fc0fece97cfb172c3fa13",
+  "0x9e3a3be28247fd1d583d812dbd52dcbb6cee63eb",
+  "0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3",
+  "0xa26a919550dc30e4122947b531caa9ff1d56378f",
+  "0xa2eab97f61ff1ec6e9708363e9111a7806118ae7",
+  "0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f",
+  "0xa85de5ed02b2d3c8130bdcd22605d0f1b44636ca",
+  "0xaa1d4c0eab9e4152890abb71fab015e23905e491",
+  "0xab575d5961a4929386288ccb4cd6ff88cdf253d2",
+  "0xaf37e249b74b2cf57bfa1ab6cdfa88248e821cb7",
+  "0xb0615c506fc5c7e11057a5d591e02d9d8b8f7c6a",
+  "0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef",
+  "0xb78aef31e52e7c2ac55bfa87117372ed06b8f067",
+  "0xb817501dbcdc39c87d7afab91f41eb3608f312be",
+  "0xb8a7187428235f26a9f43dea17126737cb925511",
+  "0xc059bb266f825e2c29c860689ee5ed9597ab0bbd",
+  "0xc0e360dae3bdcb967b16806a14e9621ece8b479a",
+  "0xc350f54d2d41e559e6ef0c178e303165367b033b",
+  "0xc50692526a8c2c2798a8434dd620616b26ec6d37",
+  "0xcbb05c528969a6afe1a4c0fd6a08280fd3bd46a2",
+  "0xcbf934975f8ec0fe153964441ee78bad752fadbe",
+  "0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21",
+  "0xcdce27f3e506dab51ac1966b73000962375b61a3",
+  "0xce15655e447667e0a5d90e4e022624f86cd53667",
+  "0xd03c73c8f3e8c7e7957b43df402ecb7640d89f62",
+  "0xd42dd7a255a7c3067ab57f66484bd65287fb6de8",
+  "0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05",
+  "0xdaca3b923d445d727ecb617608bcc7ff1b04ec7f",
+  "0xdafe23a9ec510976cd8a49ad74d098cadc01caa2",
+  "0xdd3b6a3e138c9ff9cbb288477868a66b33a5242b",
+  "0xe012c6e6a160fdf15787d7a1b7a589486dde080e",
+  "0xe1b1dc89e99f3f1e846e23a3cc3a09eb20a103e1",
+  "0xe37eabab0a20590626997305ccc1e3d7b5ba4db3",
+  "0xe3ae4e46917540b7760bf7702be2f2c503f9bc4b",
+  "0xe3c14a10f4398653569ab8eb2f86070565e22206",
+  "0xe903dbd81d8ed1286c5f03720706920929564924",
+  "0xea4228d68438a21bea9c28e2a20f47666e8087cc",
+  "0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9",
+  "0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346",
+  "0xf53358fba52b6bd19d0b25f29e727c419f0ee9ea",
+  "0xf5f164771bfd542aa608141922a91383f7196992",
+  "0xf7c84f9e98e1143eb6a8d181d1359cce273c575a",
+  "0xfb56b2ce3bd8722952b2ef9d0e9dfcb8bc1c9eaa",
+  "0xfcc2919a153785d8b0181b05212d54eb5b313a3e",
+  "0xffb78df85abd8b570e4143b7b0c63c29d7e70829",
+  "0xffe8af9c1b48dc4f71c37c0d0fe1db429bbeeaee"
+];
+
+const I18N = {
+  nl: { results: "Resultaten", search: "Zoek op naam/ID/contract…", total: n => `Totaal: ${n}`, visible: n => `Zichtbaar: ${n}`, loading: "Bezig met laden…", done: o => `Resultaten geladen voor ${o}`, rarity:"Zeldzaamheid", xp: n => `XP: ${n}`, licensors:"Licensors", select_all:"Alles", clear:"Leeg", none:"(geen)", xp_visible: n => `XP vis.: ${n}` },
+  en: { results: "Results",   search: "Search by name/ID/contract…", total: n => `Total: ${n}`,  visible: n => `Visible: ${n}`,  loading: "Loading…",           done: o => `Loaded results for ${o}`, rarity:"Rarity", xp: n => `XP: ${n}`, licensors:"Licensors", select_all:"Select all", clear:"Clear", none:"(none)", xp_visible: n => `XP vis.: ${n}` },
+  es: { results: "Resultados",search: "Buscar por nombre/ID/contrato…", total: n => `Total: ${n}`, visible: n => `Visible: ${n}`, loading: "Cargando…",     done: o => `Resultados cargados para ${o}`, rarity:"Rareza", xp: n => `XP: ${n}`, licensors:"Licenciantes", select_all:"Seleccionar todo", clear:"Limpiar", none:"(ninguno)", xp_visible: n => `XP vis.: ${n}` }
+};
+
+function setLang(lang) {
+  const t = I18N[lang] || I18N.nl;
+  document.getElementById('t_results').textContent = t.results;
+  document.getElementById('search').placeholder = t.search;
+  document.getElementById('status').textContent = t.loading;
+  document.getElementById('licBtn').textContent = t.licensors + ' ▾';
+  document.getElementById('licAll').textContent = t.select_all;
+  document.getElementById('licClear').textContent = t.clear;
+  document.querySelectorAll('.lang').forEach(el => el.classList.toggle('active', el.dataset.lang === lang));
+  document.documentElement.lang = lang;
+  localStorage.setItem('mcf_lang', lang);
+  window.__i18n = t;
+  updateBadges(); // refresh labels
+}
+
+function initLang() {
+  const url = new URL(location.href);
+  const qLang = url.searchParams.get('lang');
+  const stored = localStorage.getItem('mcf_lang');
+  const lang = qLang || stored || 'nl';
+  setLang(lang);
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('mcf_theme', theme);
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+}
+
+const url = new URL(location.href);
+const OWNERS = (url.searchParams.get('owners') || localStorage.getItem('mcf_owners') || "").split(',').filter(Boolean);
+const API_KEY = localStorage.getItem('rarible_api_key') || "";
+const headers = { 'X-API-KEY': API_KEY };
+
+function pickPreview(meta) {
+  if (!meta || !meta.content || !meta.content.length) return null;
+  const types = ["PREVIEW","PORTRAIT","BIG","ORIGINAL"];
+  for (const rep of types) {
+    const c = meta.content.find(x => x.representation === rep && x['@type'] === 'IMAGE' && x.url);
+    if (c) return c.url;
+  }
+  const any = meta.content.find(x => x.url);
+  return any ? any.url : null;
+}
+
+function tokenLink(itemId) {
+  const parts = String(itemId).split(':');
+  if (parts.length < 3) return '#';
+  return `https://rarible.com/token/polygon/${parts[1]}:${parts.slice(2).join(':')}`;
+}
+
+async function fetchJson(u) {
+  const res = await fetch(u, { headers });
+  const text = await res.text();
+  let data; try { data = JSON.parse(text); } catch { data = text; }
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${(data && data.message) || text || res.statusText}`);
+  return data;
+}
+
+async function fetchAllByOwner(owner) {
+  const items = [];
+  // Strategy A
+  try {
+    let cont;
+    do {
+      const u = new URL('https://api.rarible.org/v0.1/items/byOwner');
+      u.searchParams.set('owner', `${OWNER_GROUP}:${owner}`);
+      u.searchParams.set('blockchains', CHAIN);
+      u.searchParams.set('size', '100');
+      if (cont) u.searchParams.set('continuation', cont);
+      const data = await fetchJson(u);
+      if (Array.isArray(data.items)) items.push(...data.items);
+      cont = data.continuation || null;
+    } while (cont);
+    return items;
+  } catch (e) {
+    console.warn('Multichain route failed for', owner, e);
+  }
+  // Strategy B
+  let cont;
+  do {
+    const u = new URL('https://polygon-api.rarible.org/v0.1/nft/items/byOwner');
+    u.searchParams.set('owner', owner);
+    u.searchParams.set('size', '100');
+    if (cont) u.searchParams.set('continuation', cont);
+    const data = await fetchJson(u);
+    if (Array.isArray(data.items)) items.push(...data.items);
+    cont = data.continuation || null;
+  } while (cont);
+  return items;
+}
+
+// --- Metadata rarity & XP mapping ---
+const RARITY_ORDER = { exotic: 5, legendary: 4, epic: 3, rare: 2, common: 1, basic: 0 };
+const RARITY_LABELS = { exotic: "Exotic", legendary: "Legendary", epic: "Epic", rare: "Rare", common: "Common", basic: "Basic" };
+const XP_BY_RARITY = { basic: 1, common: 5, rare: 8, epic: 10, legendary: 20, exotic: 30 };
+
+function normalizeRarityValue(v) {
+  if (!v) return null;
+  const s = String(v).trim().toLowerCase();
+  if (["exotic"].includes(s)) return "exotic";
+  if (["legendary", "legandary", "legendery"].includes(s)) return "legendary";
+  if (["epic"].includes(s)) return "epic";
+  if (["rare"].includes(s)) return "rare";
+  if (["common"].includes(s)) return "common";
+  if (["basic"].includes(s)) return "basic";
+  return null;
+}
+
+function findRarity(meta) {
+  if (!meta) return null;
+  const direct = normalizeRarityValue(meta.rarity || meta.RARITY || meta.tier || meta.Tier);
+  if (direct) return direct;
+  const arrays = [meta.attributes, meta.traits, meta.properties, meta.Attributes, meta.Traits];
+  for (const arr of arrays) {
+    if (Array.isArray(arr)) {
+      for (const a of arr) {
+        const key = (a?.trait_type || a?.key || a?.type || a?.name || "").toString().toLowerCase();
+        const val = a?.value ?? a?.val ?? a?.display;
+        if (/rarity|tier/.test(key)) {
+          const n = normalizeRarityValue(val);
+          if (n) return n;
+        }
+      }
+    }
+  }
+  const obj = meta.properties || meta.attributes || meta.traits || {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (/rarity|tier/i.test(k)) {
+      const n = normalizeRarityValue(v);
+      if (n) return n;
+    }
+  }
+  const fromName = normalizeRarityValue(meta.name && meta.name.split(/[#-]/)[0].split(/\s+/).pop());
+  return fromName;
+}
+
+function xpForRarity(r) { return XP_BY_RARITY[r] || 0; }
+
+// --- Licensor extraction ---
+function extractLicensors(meta) {
+  const res = new Set();
+  if (!meta) return Array.from(res);
+  const keys = ['licensor','Licensor','brand','Brand','ip','IP','franchise','Franchise','licensee','Licensee'];
+  for (const k of keys) {
+    const v = meta[k];
+    if (typeof v === 'string' && v.trim()) res.add(v.trim());
+  }
+  const arrays = [meta.attributes, meta.traits, meta.properties];
+  for (const arr of arrays) {
+    if (Array.isArray(arr)) {
+      for (const a of arr) {
+        const key = (a?.trait_type || a?.key || a?.type || a?.name || "").toString();
+        const val = a?.value ?? a?.val ?? a?.display;
+        if (/licen[cs]or|brand|ip|franchise/i.test(key) && typeof val === 'string' && val.trim()) {
+          res.add(val.trim());
+        }
+      }
+    } else if (arr && typeof arr === 'object') {
+      for (const [k,v] of Object.entries(arr)) {
+        if (/licen[cs]or|brand|ip|franchise/i.test(k) && typeof v === 'string' && v.trim()) {
+          res.add(v.trim());
+        }
+      }
+    }
+  }
+  return Array.from(res);
+}
+
+const grid = document.getElementById('grid');
+const statusEl = document.getElementById('status');
+const countBadge = document.getElementById('countBadge');
+const visibleBadge = document.getElementById('visibleBadge');
+const xpBadge = document.getElementById('xpBadge');
+const xpVisibleBadge = document.getElementById('xpVisibleBadge');
+const licBtn = document.getElementById('licBtn');
+const licPanel = document.getElementById('licPanel');
+const licOpts = document.getElementById('licOpts');
+const licChips = document.getElementById('licChips');
+let allItems = [];
+let allLicensors = [];      // array of {name, count}
+let selectedLicensors = new Set(JSON.parse(localStorage.getItem('mcf_licensors') || '[]'));
+
+function computeTotalXP(items) {
+  let sum = 0;
+  for (const it of items) {
+    const r = findRarity(it.meta);
+    sum += xpForRarity(r);
+  }
+  return sum;
+}
+
+function updateBadges() {
+  countBadge.textContent = window.__i18n.total(allItems.length);
+  const visible = grid.children.length;
+  visibleBadge.textContent = window.__i18n.visible(visible);
+  const totalXP = computeTotalXP(allItems);
+  xpBadge.textContent = window.__i18n.xp(totalXP);
+  // visible XP re-computed in render() where we know the subset; if absent fallback to 0
+  if (!xpVisibleBadge.textContent.includes(':')) xpVisibleBadge.textContent = window.__i18n.xp_visible(0);
+}
+
+function rarityBadge(r) {
+  if (!r) return `<span class="rarity basic">—</span>`;
+  const rr = String(r).trim().toLowerCase();
+  const cls = `rarity ${rr}`;
+  const label = (RARITY_LABELS[rr] || (String(r).charAt(0).toUpperCase()+String(r).slice(1)));
+  return `<span class="${cls}">${label}</span>`;
+}
+
+function render(items) {
+  grid.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (const it of items) {
+    const img = pickPreview(it.meta) || '';
+    const name = (it.meta && it.meta.name) ? it.meta.name : (it.id || '—');
+    const link = tokenLink(it.id);
+    const parts = String(it.id).split(':');
+    const contract = parts[1] || '';
+    const tokenId = parts.slice(2).join(':');
+    const r = findRarity(it.meta) || null;
+    const xp = xpForRarity(r);
+    const licList = extractLicensors(it.meta);
+    const licText = licList.length ? licList.join(' • ') : window.__i18n.none;
+
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="media">${img ? `<img alt="" loading="lazy" src="${img}">` : '<div style="opacity:.5;">(geen preview)</div>'}</div>
+      <div class="body">
+        <div class="name" title="${name.replaceAll('"','&quot;')}">${name}</div>
+        <div class="muted" title="${contract}:${tokenId}">${contract.slice(0,6)}…${contract.slice(-4)} · #${tokenId}</div>
+        <div class="licensors" title="${licText.replaceAll('"','&quot;')}">${licText}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; gap:8px;">
+          <div style="display:flex; gap:6px; align-items:center;">${rarityBadge(r)} <span class="xpchip">+${xp} XP</span></div>
+          <button class="btn details btn-details" data-payload="${encodeURIComponent(JSON.stringify({id: it.id, name, contract, tokenId, meta: it.meta||{}, chain: CHAIN}))}">${T_DET.details}</button>
+          <a class="btn" href="${link}" target="_blank" rel="noreferrer">Open</a>
+        </div>
+      </div>`;
+    frag.appendChild(el);
+  }
+  grid.appendChild(frag);
+  // update visible XP based on the subset
+  xpVisibleBadge.textContent = window.__i18n.xp_visible(computeTotalXP(items));
+  updateBadges();
+}
+
+function applySearchAndSortAndFilter() {
+  const q = (document.getElementById('search').value || '').trim().toLowerCase();
+  const sort = document.getElementById('sort').value;
+  let items = allItems.filter(it => {
+    // search
+    const name = (it.meta && it.meta.name ? it.meta.name : '').toLowerCase();
+    const id = String(it.id).toLowerCase();
+    const matchQ = !q || name.includes(q) || id.includes(q);
+    if (!matchQ) return false;
+    // licensor filter
+    if (selectedLicensors.size === 0) return true;
+    const lics = extractLicensors(it.meta);
+    return lics.some(l => selectedLicensors.has(l));
+  });
+  // sort
+  if (sort !== 'default') {
+    items.sort((a,b) => {
+      if (sort === 'name') {
+        return (a.meta?.name || '').localeCompare(b.meta?.name || '');
+      }
+      if (sort === 'rarity') {
+        const ra = findRarity(a.meta); const rb = findRarity(b.meta);
+        const oa = RARITY_ORDER[ra || ''] || -1;
+        const ob = RARITY_ORDER[rb || ''] || -1;
+        return ob - oa;
+      }
+      return 0;
+    });
+  }
+  render(items);
+}
+
+function openLicPanel() {
+  licPanel.style.display = licPanel.style.display === 'block' ? 'none' : 'block';
+}
+function closeLicPanel(e) {
+  if (!licPanel.contains(e.target) && e.target !== licBtn) licPanel.style.display = 'none';
+}
+function renderLicensorUI() {
+  // Build counts
+  const counts = new Map();
+  for (const it of allItems) {
+    extractLicensors(it.meta).forEach(n => counts.set(n, (counts.get(n) || 0) + 1));
+  }
+  const arr = Array.from(counts.entries()).map(([name,count]) => ({name, count})).sort((a,b) => a.name.localeCompare(b.name));
+  allLicensors = arr;
+  // Options in panel
+  licOpts.innerHTML = '';
+  for (const {name,count} of allLicensors) {
+    const id = 'lic_' + btoa(unescape(encodeURIComponent(name))).replace(/=/g,'');
+    const div = document.createElement('label');
+    div.className = 'opt';
+    div.innerHTML = `<input type="checkbox" id="${id}" ${selectedLicensors.has(name)?'checked':''}> <span>${name}</span> <span class="muted">(${count})</span>`;
+    licOpts.appendChild(div);
+    div.querySelector('input').addEventListener('change', (e) => {
+      if (e.target.checked) selectedLicensors.add(name);
+      else selectedLicensors.delete(name);
+      localStorage.setItem('mcf_licensors', JSON.stringify(Array.from(selectedLicensors)));
+      drawLicensorChips();
+      applySearchAndSortAndFilter();
+    });
+  }
+  // Chips row
+  drawLicensorChips();
+}
+function drawLicensorChips() {
+  licChips.innerHTML = '';
+  if (selectedLicensors.size === 0) return;
+  for (const name of selectedLicensors) {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = name;
+    chip.title = 'Klik om te verwijderen';
+    chip.addEventListener('click', () => {
+      selectedLicensors.delete(name);
+      localStorage.setItem('mcf_licensors', JSON.stringify(Array.from(selectedLicensors)));
+      renderLicensorUI();
+      applySearchAndSortAndFilter();
+    });
+    licChips.appendChild(chip);
+  }
+}
+
+
+// --- Details modal + i18n ---
+const MCF_LANG = (localStorage.getItem('mcf_lang') || new URL(location.href).searchParams.get('lang') || 'nl').toLowerCase();
+const I18N_DETAILS = {
+  nl: { details: 'Details', metadata: 'Metadata', attributes: 'Eigenschappen', contract: 'Contract', token_id: 'Token ID', close: 'Sluiten', description: 'Beschrijving', collection: 'Collectie', chain: 'Blockchain', external: 'Externe link', raw: 'Ruwe JSON', copy: 'Kopieer', copied: 'Gekopieerd' },
+  en: { details: 'Details', metadata: 'Metadata', attributes: 'Attributes', contract: 'Contract', token_id: 'Token ID', close: 'Close', description: 'Description', collection: 'Collection', chain: 'Chain', external: 'External link', raw: 'Raw JSON', copy: 'Copy', copied: 'Copied' },
+  es: { details: 'Detalles', metadata: 'Metadatos', attributes: 'Atributos', contract: 'Contrato', token_id: 'Token ID', close: 'Cerrar', description: 'Descripción', collection: 'Colección', chain: 'Cadena', external: 'Enlace externo', raw: 'JSON sin procesar', copy: 'Copiar', copied: 'Copiado' }
+};
+const T_DET = I18N_DETAILS[MCF_LANG] || I18N_DETAILS.nl;
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function normalizeAttributes(meta){
+  let attrs = meta.attributes || meta.traits || meta.properties || meta.Attributes;
+  if (!attrs) return [];
+  if (attrs && typeof attrs === 'object' && !Array.isArray(attrs)) {
+    return Object.keys(attrs).map(k => ({ label: k, value: (typeof attrs[k] === 'object') ? JSON.stringify(attrs[k]) : String(attrs[k]) }));
+  }
+  if (Array.isArray(attrs)) {
+    return attrs.map(a => ({ label: a.trait_type || a.trait || a.key || a.type || a.name || '—', value: (a.value != null ? a.value : (a.display_type != null ? a.display_type : '')) }));
+  }
+  return [];
+}
+
+function showDetails(payload){
+  const modal = document.getElementById('detailModal');
+  const body  = document.getElementById('detailBody');
+  const title = document.getElementById('detailTitle');
+  const btnX  = document.getElementById('detailClose');
+
+  const meta = (payload && payload.meta) || {};
+  const collection = (meta.collection && (meta.collection.name || meta.collection.title)) || meta.collection_name || (meta.contract && meta.contract.name) || '';
+  const description = meta.description || '';
+  const external = meta.external_url || meta.external_link || '';
+  const imageUrl = meta.image || meta.image_url || '';
+  const chain = (typeof CHAIN !== 'undefined' ? CHAIN : (payload.chain || ''));
+
+  title.textContent = T_DET.details + ' – ' + (payload.name || payload.id || '—');
+
+  const copyBtn = (value) => `<button class="copybtn" data-copy="${encodeURIComponent(value)}">${T_DET.copy}</button>`;
+  const cRow = (label, val, actions='') => `<tr><th>${label}</th><td>${val}${actions}</td></tr>`;
+
+  const rows = [];
+  rows.push(cRow(T_DET.contract, esc(payload.contract||''), copyBtn(payload.contract||'')));
+  rows.push(cRow(T_DET.token_id, esc(payload.tokenId||''), copyBtn(payload.tokenId||'')));
+  if (collection) rows.push(cRow(T_DET.collection, esc(collection)));
+  if (chain) rows.push(cRow(T_DET.chain, esc(chain)));
+  if (external) rows.push(cRow(T_DET.external, `<a href="${esc(external)}" target="_blank" rel="noreferrer">${esc(external)}</a>`));
+
+  const headCard = `<div class="meta-card"><table class="meta-table">${rows.join('')}</table>${description?`<p style="margin:8px 0 0;">${esc(description)}</p>`:''}</div>`;
+
+  const norm = normalizeAttributes(meta);
+  const attrsCard = (norm.length)
+    ? `<div class="meta-card"><h4 style="margin:0 0 8px;">${T_DET.attributes}</h4>
+         <table class="meta-table">` +
+         norm.map(a => `<tr><th>${esc(a.label)}</th><td>${esc(a.value)}</td></tr>`).join('')
+       + `</table></div>`
+    : '';
+
+  const jsonCard = `<details class="meta-toggle"><summary>${T_DET.raw}</summary><pre>${esc(JSON.stringify(meta, null, 2))}</pre></details>`;
+  const imgCard = imageUrl ? `<div class="preview"><img alt="" src="${esc(imageUrl)}"></div>` : '';
+
+  const gridClass = imageUrl ? 'meta-grid has-image' : 'meta-grid';
+  body.innerHTML = `<div class="${gridClass}"><div class="meta-col">${headCard}${attrsCard}${jsonCard}</div>${imageUrl ? `<div class="meta-col">${imgCard}</div>` : ''}</div>`;
+
+  modal.classList.remove('hidden');
+  btnX.onclick = () => modal.classList.add('hidden');
+  const backdrop = modal.querySelector('.modal-backdrop');
+  if (backdrop) backdrop.onclick = () => modal.classList.add('hidden');
+
+  body.querySelectorAll('.copybtn').forEach(b => {
+    b.addEventListener('click', () => {
+      const val = decodeURIComponent(b.getAttribute('data-copy')||'');
+      if (navigator.clipboard) { navigator.clipboard.writeText(val).catch(()=>{}); }
+      b.textContent = T_DET.copied; setTimeout(()=> b.textContent = T_DET.copy, 1000);
+    });
+  });
+
+  document.addEventListener('keydown', function escClose(ev){
+    if(ev.key==='Escape'){
+      modal.classList.add('hidden');
+      document.removeEventListener('keydown', escClose);
+    }
+  });
+}
+
+// Event delegation for details buttons
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('.btn-details');
+  if(!b) return;
+  ev.preventDefault();
+  try {
+    const payload = JSON.parse(decodeURIComponent(b.getAttribute('data-payload')));
+    showDetails(payload);
+  } catch(e){ console.error('Invalid details payload', e); }
+});
+
+async function boot() {
+  initLang();
+  const savedTheme = localStorage.getItem('mcf_theme') || 'dark';
+  setTheme(savedTheme);
+  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+  document.querySelectorAll('.lang').forEach(el => el.addEventListener('click', () => setLang(el.dataset.lang)));
+  document.getElementById('search').addEventListener('input', applySearchAndSortAndFilter);
+  document.getElementById('sort').addEventListener('change', applySearchAndSortAndFilter);
+
+  licBtn.addEventListener('click', openLicPanel);
+  document.addEventListener('click', closeLicPanel);
+  document.getElementById('licAll').addEventListener('click', () => {
+    selectedLicensors = new Set(allLicensors.map(x => x.name));
+    localStorage.setItem('mcf_licensors', JSON.stringify(Array.from(selectedLicensors)));
+    renderLicensorUI(); applySearchAndSortAndFilter();
+  });
+  document.getElementById('licClear').addEventListener('click', () => {
+    selectedLicensors.clear();
+    localStorage.setItem('mcf_licensors', JSON.stringify([]));
+    renderLicensorUI(); applySearchAndSortAndFilter();
+  });
+
+  if (!API_KEY) { statusEl.textContent = "Geen API-key in localStorage."; return; }
+  if (!OWNERS.length) { statusEl.textContent = "Geen walletadressen."; return; }
+
+  statusEl.textContent = window.__i18n.loading;
+
+  const setContracts = new Set(CONTRACTS.map(s => s.toLowerCase()));
+  let collected = [];
+  for (const owner of OWNERS) {
+    try {
+      const items = await fetchAllByOwner(owner);
+      collected.push(...items);
+    } catch (e) {
+      console.warn('Failed owner', owner, e);
+    }
+  }
+  allItems = collected.filter(it => {
+    const id = String(it.id);
+    const parts = id.split(':');
+    const chainOk = (it.blockchain && it.blockchain.toUpperCase() === CHAIN) || id.toUpperCase().startsWith(CHAIN + ':');
+    const contract = (parts.length >= 2 ? parts[1] : '').toLowerCase();
+    return chainOk && setContracts.has(contract);
+  });
+
+  renderLicensorUI();
+  applySearchAndSortAndFilter();
+  statusEl.textContent = window.__i18n.done(OWNERS.map(o => o.slice(0,6) + '…' + o.slice(-4)).join(', '));
+}
+
+
+function goSets() {
+  const url = new URL('sets.html', location.href);
+  if (OWNERS && OWNERS.length) url.searchParams.set('owners', OWNERS.join(','));
+  window.open(url.toString(), '_blank');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  boot();
+  const setsEl = document.getElementById('setsBtn');
+  if (setsEl) setsEl.addEventListener('click', (e) => { e.preventDefault(); goSets(); });
+});
+
+</script>
+</body>
+</html>
