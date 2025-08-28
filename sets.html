@@ -512,564 +512,153 @@ function computeProgress(def, inv){
 
 // --- SETS defs (with your mappings; can add assets later) ---
 const SETS = [
-    {cat:"TWD", name:"TWD DARYL DIXON SET", xp:20, req:[
-    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"rare"}, // CROSSBOW
-    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"epic"}  // BLOODY
+  {cat:"TWD", name:"TWD DARYL DIXON SET", xp:20, req:[
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"rare"},
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"epic"}
   ]},
   {cat:"TWD", name:"TWD DARYL DIXON SUPER SET", xp:35, req:[
-    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"rare"},     // CROSSBOW
-    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"epic"},    // BLOODY
-    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"legendary"} // BANDANA
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"rare"},
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"epic"},
+    {contract:"0x5beeee0a5630f90628cdf36d806ea06c9053b19c", rarity:"legendary"}
   ]},
   {cat:"BRZRKR", name:"BRZRKR", xp:55, req:[
-    {contract:"0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", rarity:"rare"}, // ROCKET LAUNCHER
-    {contract:"0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", rarity:"epic"}  // GUN
+    {contract:"0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", rarity:"rare"},
+    {contract:"0xdafe23a9ec510976cd8a49ad74d098cadc01caa2", rarity:"epic"}
   ]},
   {cat:"DC", name:"BATMAN YEAR TWO SET", xp:20, req:[
-    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"rare"},   // B&W
-    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"epic"},  // CLASSIC
-    {contract:"0x0fd66c55e5861129376f207b59d71aacb1b0cc4f", rarity:"rare"}   // BATMOBILE
+    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"rare"},
+    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"epic"},
+    {contract:"0x0fd66c55e5861129376f207b59d71aacb1b0cc4f", rarity:"rare"}
   ]},
   {cat:"DC", name:"BATMAN BY TODD McFARLANE SET", xp:40, req:[
-    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"epic"},     // BLUE CAPE
-    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"legendary"} // BLACK CAPE
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"epic"},
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"legendary"}
   ]},
   {cat:"DC", name:"BATMAN BY TODD McFARLANE SUPER SET", xp:55, req:[
-    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"epic"},     // BLUE CAPE
-    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"legendary"}, // BLACK CAPE
-    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"exotic"}    // JOKERIZED
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"epic"},
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"legendary"},
+    {contract:"0xcd17d2036e0cd836a95c9df33a1b161cd3eebc21", rarity:"exotic"}
   ]},
   {cat:"DC", name:"WAVE 1 GREEN LANTERN B.A.F SET", xp:40, req:[
-    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"common"},   // GREEN LANTERN
-    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"epic"},     // BLUE LANTERN
-    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"legendary"} // ORANGE LANTERN
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"common"},
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"epic"},
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 1 BATMAN B.A.F SET", xp:40, req:[
-    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"common"},   // BLACK & PURPLE
-    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"epic"},     // GREY & BLUE
-    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"legendary"} // ICE
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"common"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"epic"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 1 AQUAMAN B.A.F SET", xp:40, req:[
-    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"common"},   // TRIDENT
-    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"epic"},     // SMILE
-    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"legendary"} // FLASHPOINT
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"common"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"epic"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 1 COMMON B.A.F SET", xp:40, req:[
-    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"common"}, // GREEN LANTERN
-    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"common"}, // BATMAN BLACK & PURPLE
-    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"common"}  // AQUAMAN TRIDENT
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"common"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"common"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"common"}
   ]},
   {cat:"DC", name:"WAVE 1 EPIC B.A.F SET", xp:40, req:[
-    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"epic"},   // BLUE LANTERN
-    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"epic"},   // BATMAN GREY & BLUE
-    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"epic"}    // AQUAMAN SMILE
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"epic"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"epic"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"epic"}
   ]},
   {cat:"DC", name:"WAVE 1 LEGENDARY B.A.F SET", xp:55, req:[
-    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"legendary"}, // ORANGE LANTERN
-    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"legendary"}, // BATMAN ICE
-    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"legendary"}  // AQUAMAN FLASHPOINT
+    {contract:"0x3ca89fcea0934efaadf2381906ca1cb004f8989d", rarity:"legendary"},
+    {contract:"0x35b07bce9421e5d19b59a966aaf03e22b240d4d0", rarity:"legendary"},
+    {contract:"0x42cab89b1ed5b9f49636a06ab0e4866aaa2a2c3e", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 2 GREEN ARROW B.A.F SET", xp:40, req:[
-    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"common"},   // GREEN ARROW
-    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"epic"},     // BROWN ACCENT
-    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"legendary"} // BLACK ACCENT
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"common"},
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"epic"},
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 2 SUPERMAN B.A.F SET", xp:40, req:[
-    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"common"},   // SUPERMAN
-    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"epic"},     // STYLIZED
-    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"legendary"} // BLACK & SILVER SUIT
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"common"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"epic"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 2 THE ATOM B.A.F SET", xp:40, req:[
-    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"common"},   // RAY PALMER
-    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"epic"},     // RYAN CHOI
-    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"legendary"} // SHRINKING
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"common"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"epic"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 2 COMMON B.A.F SET", xp:40, req:[
-    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"common"}, // GREEN ARROW
-    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"common"}, // SUPERMAN
-    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"common"}  // RAY PALMER
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"common"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"common"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"common"}
   ]},
   {cat:"DC", name:"WAVE 2 EPIC B.A.F SET", xp:40, req:[
-    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"epic"},   // GREEN ARROW BROWN ACCENT
-    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"epic"},   // SUPERMAN STYLIZED
-    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"epic"}    // THE ATOM RYAN CHOI
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"epic"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"epic"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"epic"}
   ]},
   {cat:"DC", name:"WAVE 2 LEGENDARY B.A.F SET", xp:55, req:[
-    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"legendary"}, // GREEN ARROW BLACK ACCENT
-    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"legendary"}, // SUPERMAN BLACK & SILVER SUIT
-    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"legendary"}  // THE ATOM SHRINKING
+    {contract:"0xa2eab97f61ff1ec6e9708363e9111a7806118ae7", rarity:"legendary"},
+    {contract:"0xef0f05593a3ca8a8bb3c5f4ac86ac4af9bfeb346", rarity:"legendary"},
+    {contract:"0x7a768033aae19e13345686618bdcbf735e9b9a74", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 3 ROBIN OF EARTH -2 B.A.F SET", xp:40, req:[
-    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"common"},   // ROBIN OF EARTH -2
-    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"epic"},     // B&W
-    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"legendary"} // MATTE SUIT
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"common"},
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"epic"},
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"legendary"}
   ]},
-  {cat:"DC", name:"WAVE 3 THE JOKER SILVER AGE SET", xp:40, req:[
-    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"common"},   // PURPLE SUIT
-    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"epic"},     // BLACK SUIT
-    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"legendary"} // WHITE SUIT
+  {cat:"DC", name:"WAVE 3 THE JOKER SILVER AGE B.A.F SET", xp:40, req:[
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"common"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"epic"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 3 THE FLASH SPEED FORCE B.A.F SET", xp:40, req:[
-    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"},   // CLASSIC SUIT
-    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"epic"},     // UNMASKED
-    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"legendary"} // GOLD SUIT
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"epic"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"legendary"}
   ]},
   {cat:"DC", name:"WAVE 3 COMMON B.A.F SET", xp:40, req:[
-    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"common"}, // ROBIN OF EARTH -2
-    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"common"}, // THE JOKER PURPLE SUIT
-    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"}  // THE FLASH UNMASKED
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"common"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"common"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"}
   ]},
   {cat:"DC", name:"WAVE 3 EPIC B.A.F SET", xp:40, req:[
-    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"epic"},   // ROBIN OF EARTH -2 B&W
-    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"common"}, // THE FLASH CLASSIC SUIT
-    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"epic"}    // THE JOKER BLACK SUIT
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"epic"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"epic"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"epic"}
   ]},
   {cat:"DC", name:"WAVE 3 LEGENDARY B.A.F SET", xp:55, req:[
-    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"legendary"}, // ROBIN OF EARTH -2 MATTE SUIT
-    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"legendary"}, // THE JOKER WHITE SUIT
-    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"legendary"}  // THE FLASH GOLD SUIT
-  ]},
-  {cat:"DC", name:"WAVE 4 DR FATE B.A.F SET", xp:40, req:[
-    {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"common"},   // BRIGHT
-    {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"epic"},     // MUTED
-    {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"legendary"} // GOLD
-  ]},
-  {cat:"DC", name:"WAVE 4 SUPERMAN SILVER AGE B.A.F SET", xp:40, req:[
-    {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"common"},   // CLASSIC
-    {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"epic"},     // RED
-    {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"legendary"} // GREEN
-  ]},
-  {cat:"DC", name:"WAVE 4 TWO-FACE SILVER AGE SET", xp:40, req:[
-    {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"common"},   // B&W
-    {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"epic"},     // PURPLE & ORANGE
-    {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"legendary"} // PURPLE & BLACK
-  ]},
-  {cat:"DC", name:"WAVE 4 COMMON B.A.F SET", xp:40, req:[
-    {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"common"}, // DR FATE BRIGHT
-    {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"common"}, // SUPERMAN SILVER AGE CLASSIC
-    {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"common"}  // TWO-FACE B&W
-  ]},
-  {cat:"DC", name:"WAVE 4 EPIC B.A.F SET", xp:40, req:[
-    {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"epic"},   // DR FATE MUTED
-    {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"epic"},   // SUPERMAN SILVER AGE RED
-    {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"epic"}    // TWO-FACE PURPLE & ORANGE
-  ]},
-  {cat:"DC", name:"WAVE 4 LEGENDARY B.A.F SET", xp:55, req:[
-    {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"legendary"}, // DR FATE GOLD
-    {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"legendary"}, // SUPERMAN SILVER AGE GREEN
-    {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"legendary"}  // TWO-FACE PURPLE & BLACK
-  ]},
-
-  // New DC Sets
-  {cat:"DC", name:"BATMAN YEAR TWO SUPER SET", xp:35, req:[
-    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"epic"},     // CLASSIC SIGNED
-    {contract:"0x4bdaf58712cf8c69fe619f32f373d541ea87a51a", rarity:"epic"},     // B&W SIGNED
-    {contract:"0x0fd66c55e5861129376f207b59d71aacb1b0cc4f", rarity:"legendary"} // BATMOBILE
-  ]},
-  {cat:"DC", name:"BLUE BEETLE SET", xp:20, req:[
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"common"},   // IN FLIGHT
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"epic"},     // WITH SWORD
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"legendary"} // CARAPAX
-  ]},
-  {cat:"DC", name:"BLUE BEETLE SUPER SET", xp:35, req:[
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"common"},   // IN FLIGHT
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"epic"},     // WITH SWORD
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"legendary"}, // CARAPAX
-    {contract:"0x229f58f93d2607c54d0abcf899c807f1f3b40ab8", rarity:"exotic"}    // SWORD
-  ]},
-  {cat:"DC", name:"SUPERMAN ACTION COMICS #1000 SET", xp:20, req:[
-    {contract:"0x0039650dc457f9b5002112fe1ee4c7895f5c14e2", rarity:"common"}, // RED/BLUE SUIT
-    {contract:"0x0039650dc457f9b5002112fe1ee4c7895f5c14e2", rarity:"epic"}   // SOLAR SUIT
-  ]},
-  {cat:"DC", name:"SUPERMAN SUPER SET", xp:35, req:[
-    {contract:"0x0039650dc457f9b5002112fe1ee4c7895f5c14e2", rarity:"common"},   // RED/BLUE SUIT
-    {contract:"0x0039650dc457f9b5002112fe1ee4c7895f5c14e2", rarity:"epic"},     // SOLAR SUIT
-    {contract:"0x2595b68c39f9f42f6d533f85fca4cdc6fff29a09", rarity:"legendary"} // SDCC 85TH ANNIVERSARY
-  ]},
-  {cat:"DC", name:"SUPERMAN ACTION COMICS #1 SET", xp:20, req:[
-    {contract:"0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3", rarity:"common"}, // GREEN CAR
-    {contract:"0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3", rarity:"epic"}   // YELLOW CAR
-  ]},
-  {cat:"DC", name:"SUPERMAN ACTION COMICS #1 SUPER SET", xp:35, req:[
-    {contract:"0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3", rarity:"common"},   // GREEN CAR
-    {contract:"0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3", rarity:"epic"},     // YELLOW CAR
-    {contract:"0x2eea5c7d812e30f2940f6ecdb3dbaddc467a2ee3", rarity:"legendary"} // BLACK CAR
-  ]},
-  {cat:"DC", name:"BANE KNIGHTFALL SET", xp:20, req:[
-    {contract:"0x9a4767252f3b40929bc579a9c6f3d140c0901af2", rarity:"common"}, // GREEN VENOM
-    {contract:"0x9a4767252f3b40929bc579a9c6f3d140c0901af2", rarity:"epic"}   // RED VENOM
-  ]},
-  {cat:"DC", name:"BANE KNIGHTFALL SUPER SET", xp:35, req:[
-    {contract:"0x9a4767252f3b40929bc579a9c6f3d140c0901af2", rarity:"common"},   // GREEN VENOM
-    {contract:"0x9a4767252f3b40929bc579a9c6f3d140c0901af2", rarity:"epic"},     // RED VENOM
-    {contract:"0x9a4767252f3b40929bc579a9c6f3d140c0901af2", rarity:"legendary"} // BLUE VENOM
-  ]},
-  {cat:"DC", name:"DEATHSTROKE SET", xp:20, req:[
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"common"},   // CLASSIC BLUE
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"epic"},     // B&W
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"legendary"} // BLACK & ORANGE
-  ]},
-  {cat:"DC", name:"DEATHSTROKE SUPER SET", xp:35, req:[
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"common"},   // CLASSIC BLUE
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"epic"},     // B&W
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"legendary"}, // BLACK & ORANGE
-    {contract:"0x240a1d938d78c76ad8af1ce080858614da311636", rarity:"exotic"}    // BRONZE
-  ]},
-  {cat:"DC", name:"BLACK ADAM BUST SET", xp:35, req:[
-    {contract:"0x2b3d922b71d5bb1d745859f8c2cfa00951bd382a", rarity:"common"},   // BRONZE
-    {contract:"0x2b3d922b71d5bb1d745859f8c2cfa00951bd382a", rarity:"epic"},     // SILVER
-    {contract:"0x2b3d922b71d5bb1d745859f8c2cfa00951bd382a", rarity:"legendary"} // GOLD
-  ]},
-  {cat:"DC", name:"BATMAN KNIGHTFALL SET", xp:20, req:[
-    {contract:"0xd03c73c8f3e8c7e7957b43df402ecb7640d89f62", rarity:"common"}, // BLUE SUIT
-    {contract:"0xd03c73c8f3e8c7e7957b43df402ecb7640d89f62", rarity:"epic"}   // BLACK SUIT
-  ]},
-  {cat:"DC", name:"DOOMSDAY SET", xp:20, req:[
-    {contract:"0x7180b24b73495968acd96f700f0860599a75dc9e", rarity:"common"}, // GREY
-    {contract:"0x7180b24b73495968acd96f700f0860599a75dc9e", rarity:"epic"}   // LAVA
-  ]},
-  {cat:"DC", name:"DOOMSDAY SUPER SET", xp:35, req:[
-    {contract:"0x7180b24b73495968acd96f700f0860599a75dc9e", rarity:"common"},   // GREY
-    {contract:"0x7180b24b73495968acd96f700f0860599a75dc9e", rarity:"epic"},     // LAVA
-    {contract:"0x7180b24b73495968acd96f700f0860599a75dc9e", rarity:"legendary"} // KRYPTONITE
-  ]},
-  {cat:"DC", name:"MARTIAN MANHUNTER SET", xp:20, req:[
-    {contract:"0x6b75497bd0a94b03353c69cd93317e2a3b9ac803", rarity:"common"}, // GREEN
-    {contract:"0x6b75497bd0a94b03353c69cd93317e2a3b9ac803", rarity:"epic"}   // GREY
-  ]},
-  {cat:"DC", name:"MARTIAN MANHUNTER SUPER SET", xp:35, req:[
-    {contract:"0x6b75497bd0a94b03353c69cd93317e2a3b9ac803", rarity:"common"},   // GREEN
-    {contract:"0x6b75497bd0a94b03353c69cd93317e2a3b9ac803", rarity:"epic"},     // GREY
-    {contract:"0x6b75497bd0a94b03353c69cd93317e2a3b9ac803", rarity:"legendary"} // SIGNED
-  ]},
-  {cat:"DC", name:"MR FREEZE SET", xp:20, req:[
-    {contract:"0x4867349931a547c47e3f4b4dffe7afa5c59b6174", rarity:"common"},   // MR FREEZE
-    {contract:"0x4867349931a547c47e3f4b4dffe7afa5c59b6174", rarity:"epic"},     // BLUE SUIT
-    {contract:"0x4867349931a547c47e3f4b4dffe7afa5c59b6174", rarity:"legendary"} // BLACK SUIT
-  ]},
-  {cat:"DC", name:"CATWOMAN KNIGHTFALL SET", xp:20, req:[
-    {contract:"0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1", rarity:"common"}, // PURPLE SUIT
-    {contract:"0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1", rarity:"epic"}   // GREY SUIT
-  ]},
-  {cat:"DC", name:"CATWOMAN KNIGHTFALL SUPER SET", xp:35, req:[
-    {contract:"0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1", rarity:"common"},   // PURPLE SUIT
-    {contract:"0x3eba9e3a6c4cc4883da6cbc0792b4ba62f658da1", rarity:"epic"},     // GREY SUIT
-    {contract:"0xfcc2919a153785d8b0181b05212d54eb5b313a3e", rarity:"legendary"} // BLACK SUIT
-  ]},
-  {cat:"DC", name:"WONDER WOMAN CLASSIC SET", xp:20, req:[
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"common"},   // SATIN SWORD
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"epic"},     // METALLIC AXE
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"legendary"} // SATIN LASSO
-  ]},
-  {cat:"DC", name:"WONDER WOMAN CLASSIC SUPER SET", xp:35, req:[
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"common"},   // SATIN SWORD
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"epic"},     // METALLIC AXE
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"legendary"}, // SATIN LASSO
-    {contract:"0x5f075c762e276a6527846427e66c75e89ef30091", rarity:"exotic"}    // METALLIC LASSO
-  ]},
-  {cat:"DC", name:"LOBO SET", xp:20, req:[
-    {contract:"0x66fc5b74aa52565d62ada7f15cbe042a4999e22e", rarity:"common"}, // LOBO
-    {contract:"0x66fc5b74aa52565d62ada7f15cbe042a4999e22e", rarity:"epic"}   // GREEN HAIR
-  ]},
-  {cat:"DC", name:"LOBO SUPER SET", xp:35, req:[
-    {contract:"0x66fc5b74aa52565d62ada7f15cbe042a4999e22e", rarity:"common"},   // LOBO
-    {contract:"0x66fc5b74aa52565d62ada7f15cbe042a4999e22e", rarity:"epic"},     // GREEN HAIR
-    {contract:"0x66fc5b74aa52565d62ada7f15cbe042a4999e22e", rarity:"legendary"} // PURPLE HAIR
-  ]},
-  {cat:"DC", name:"SPACEHOG SET", xp:20, req:[
-    {contract:"0x651879523e831763519ab8df1d8cd6fa8c4c9937", rarity:"common"}, // RED
-    {contract:"0x651879523e831763519ab8df1d8cd6fa8c4c9937", rarity:"epic"}   // BLUE
-  ]},
-  {cat:"DC", name:"SPACEHOG SUPER SET", xp:35, req:[
-    {contract:"0x651879523e831763519ab8df1d8cd6fa8c4c9937", rarity:"common"},   // RED
-    {contract:"0x651879523e831763519ab8df1d8cd6fa8c4c9937", rarity:"epic"},     // BLUE
-    {contract:"0x651879523e831763519ab8df1d8cd6fa8c4c9937", rarity:"legendary"} // BLACK
-  ]},
-  {cat:"DC", name:"BATWING SET", xp:20, req:[
-    {contract:"0x398acb7ea6a9602a57d3eaec89588923b5235bc5", rarity:"common"}, // BLACK
-    {contract:"0x398acb7ea6a9602a57d3eaec89588923b5235bc5", rarity:"epic"}   // SILVER
-  ]},
-  {cat:"DC", name:"BATWING SUPER SET", xp:35, req:[
-    {contract:"0x398acb7ea6a9602a57d3eaec89588923b5235bc5", rarity:"common"},   // BLACK
-    {contract:"0x398acb7ea6a9602a57d3eaec89588923b5235bc5", rarity:"epic"},     // SILVER
-    {contract:"0x398acb7ea6a9602a57d3eaec89588923b5235bc5", rarity:"legendary"} // JOKERIZED
-  ]},
-  {cat:"DC", name:"TUMBLER SET", xp:20, req:[
-    {contract:"0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", rarity:"common"},   // TUMBLER
-    {contract:"0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", rarity:"epic"},     // BLACK
-    {contract:"0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", rarity:"legendary"} // CAMO
-  ]},
-  {cat:"DC", name:"TUMBLER SUPER SET", xp:35, req:[
-    {contract:"0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", rarity:"common"},   // TUMBLER
-    {contract:"0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", rarity:"epic"},     // BLACK
-    {contract:"0x4925bd9f5e72cfc518fb9c6e078009cfc32bda6f", rarity:"legendary"}, // CAMO
-    {contract:"0x049474b730f15d863e4b87c352fae7d5acc1197f", rarity:"exotic"}     // JOKERIZED
-  ]},
-  {cat:"DC", name:"1989 BATMAN COWL SET", xp:20, req:[
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"common"},   // 1989 COWL
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"epic"},     // METALLIC
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"legendary"} // MARBLE
-  ]},
-  {cat:"DC", name:"1989 BATMAN COWL SUPER SET", xp:35, req:[
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"common"},   // 1989 COWL
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"epic"},     // METALLIC
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"legendary"}, // MARBLE
-    {contract:"0x028ab77ff9794d2b02f11f77a01c7c2f96618916", rarity:"exotic"}    // JOKERIZED
-  ]},
-  {cat:"DC", name:"BATMAN BEYOND SET", xp:20, req:[
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"common"},   // BATMAN BEYOND
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"epic"},     // INQUE
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"legendary"} // ACCENT EDITION
-  ]},
-  {cat:"DC", name:"BATMAN BEYOND SUPER SET", xp:35, req:[
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"common"},   // BATMAN BEYOND
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"epic"},     // INQUE
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"legendary"}, // ACCENT EDITION
-    {contract:"0x509e2cb48f98ee08ed7d69c497b8d51ac6ddef7c", rarity:"exotic"}    // KRYPTONITE GREEN
-  ]},
-  {cat:"DC", name:"BATMAN BEYOND KRYPTONITE SUIT SUPER SET", xp:35, req:[
-    {contract:"0x8bcb47ba475fd7d52975a5c660750ad5e60a6281", rarity:"common"},   // RED
-    {contract:"0x8bcb47ba475fd7d52975a5c660750ad5e60a6281", rarity:"epic"},     // BLUE
-    {contract:"0x8bcb47ba475fd7d52975a5c660750ad5e60a6281", rarity:"legendary"} // WHITE
-  ]},
-  {cat:"DC", name:"THE FLASH BARRY ALLEN SET", xp:20, req:[
-    {contract:"0x02994090747138a15361560f943cc5fbfcff256d", rarity:"common"},   // BARRY ALLEN
-    {contract:"0x02994090747138a15361560f943cc5fbfcff256d", rarity:"epic"},     // REVERSE FLASH
-    {contract:"0x02994090747138a15361560f943cc5fbfcff256d", rarity:"legendary"} // ACCENT EDITION
-  ]},
-  {cat:"DC", name:"THE FLASH BY JIM LEE SET", xp:40, req:[
-    {contract:"0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2", rarity:"epic"},     // THE FLASH
-    {contract:"0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2", rarity:"legendary"} // REVERSE FLASH
-  ]},
-  {cat:"DC", name:"THE FLASH BY JIM LEE SUPER SET", xp:55, req:[
-    {contract:"0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2", rarity:"epic"},     // THE FLASH
-    {contract:"0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2", rarity:"legendary"}, // REVERSE FLASH
-    {contract:"0x065f62e2d98f6ee8ddf3d6899c4b3a2a9b9b3ea2", rarity:"exotic"}    // ACCENT EDITION
-  ]},
-  {cat:"DC", name:"SUPERMAN BY JIM LEE SET", xp:40, req:[
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"common"},   // METAL EAGLE
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"epic"},     // BRONZE EAGLE
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"legendary"} // COPPER EAGLE
-  ]},
-  {cat:"DC", name:"SUPERMAN BY JIM LEE SUPER SET", xp:55, req:[
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"common"},   // METAL EAGLE
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"epic"},     // BRONZE EAGLE
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"legendary"}, // COPPER EAGLE
-    {contract:"0x0866e58f7faaa78b7bf709398c131586cedf0833", rarity:"exotic"}    // LASER EYES
-  ]},
-  {cat:"DC", name:"WONDER WOMAN BY JIM LEE SET", xp:40, req:[
-    {contract:"0x53247d58b7e1731a730773f5370f712867a22b5f", rarity:"epic"},     // WONDER WOMAN
-    {contract:"0x53247d58b7e1731a730773f5370f712867a22b5f", rarity:"legendary"} // SILVER SHIELD
-  ]},
-  {cat:"DC", name:"WONDER WOMAN BY JIM LEE SUPER SET", xp:55, req:[
-    {contract:"0x53247d58b7e1731a730773f5370f712867a22b5f", rarity:"epic"},     // WONDER WOMAN
-    {contract:"0x53247d58b7e1731a730773f5370f712867a22b5f", rarity:"legendary"}, // SILVER SHIELD
-    {contract:"0x1b15a670992d7b2475ed9578ef962bdc22f753a6", rarity:"exotic"}    // GOLD SHIELD
-  ]},
-  {cat:"DC", name:"GREEN LANTERN HAL JORDAN SET", xp:20, req:[
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"common"},   // GREEN LANTERN
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"epic"},     // YELLOW LANTERN
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"legendary"} // RED LANTERN
-  ]},
-  {cat:"DC", name:"GREEN LANTERN HAL JORDAN SUPER SET", xp:35, req:[
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"common"},   // GREEN LANTERN
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"epic"},     // YELLOW LANTERN
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"legendary"}, // RED LANTERN
-    {contract:"0xe3c14a10f4398653569ab8eb2f86070565e22206", rarity:"exotic"}    // BLACK LANTERN
-  ]},
-  {cat:"DC", name:"THE JOKER BY JASON FABOK SET", xp:40, req:[
-    {contract:"0x79f1437646c048815a4187f598b877595f184592", rarity:"epic"},     // PURPLE SUIT
-    {contract:"0x79f1437646c048815a4187f598b877595f184592", rarity:"legendary"} // BLACK SUIT
-  ]},
-  {cat:"DC", name:"THE JOKER BY JASON FABOK SUPER SET", xp:55, req:[
-    {contract:"0x79f1437646c048815a4187f598b877595f184592", rarity:"epic"},     // PURPLE SUIT
-    {contract:"0x79f1437646c048815a4187f598b877595f184592", rarity:"legendary"}, // BLACK SUIT
-    {contract:"0x79f1437646c048815a4187f598b877595f184592", rarity:"exotic"}    // WHITE SUIT
-  ]},
-  {cat:"DC", name:"NIGHTWING SET", xp:20, req:[
-    {contract:"0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9", rarity:"common"}, // BLUE SUIT
-    {contract:"0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9", rarity:"epic"}   // RED SUIT
-  ]},
-  {cat:"DC", name:"NIGHTWING SUPER SET", xp:35, req:[
-    {contract:"0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9", rarity:"common"},   // BLUE SUIT
-    {contract:"0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9", rarity:"epic"},     // RED SUIT
-    {contract:"0xea52d6ea1743bc5cb69cf63cd8bc5e53e03b2ed9", rarity:"legendary"} // B&W
-  ]},
-
-  // New Spawn Sets
-  {cat:"Spawn", name:"SPAWN LAUNCH SERIES SET", xp:20, req:[
-    {contract:"0x06780a1388a4c8c06267e3b2b881539bd652f2a8", rarity:"common"},   // TRASH THRONE
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"epic"},     // CLOWN
-    {contract:"0x355879b619c53f4bc67c9778d4f1e4cc44c484a4", rarity:"legendary"} // REDEEMER
-  ]},
-  {cat:"Spawn", name:"SPAWN LAUNCH SERIES SUPER SET", xp:35, req:[
-    {contract:"0x06780a1388a4c8c06267e3b2b881539bd652f2a8", rarity:"epic"},     // BLOODY TRASH THRONE
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"legendary"}, // BLOODY CLOWN
-    {contract:"0x355879b619c53f4bc67c9778d4f1e4cc44c484a4", rarity:"exotic"}    // DARK REDEEMER
-  ]},
-  {cat:"Spawn", name:"SPAWN GIFT SUPER SET", xp:35, req:[
-    {contract:"0x681f695eb7659d26b95f5ea3197e348af81450e8", rarity:"epic"},     // ANIMATED THRASH THRONE
-    {contract:"0x355879b619c53f4bc67c9778d4f1e4cc44c484a4", rarity:"legendary"} // ANIMATED REDEEMER
-  ]},
-  {cat:"Spawn", name:"GUNSLINGER SPAWN SET", xp:20, req:[
-    {contract:"0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", rarity:"common"}, // ON HORSE CLASSIC
-    {contract:"0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", rarity:"epic"}   // SHOOTOUT CLASSIC
-  ]},
-  {cat:"Spawn", name:"GUNSLINGER SPAWN SUPER SET", xp:35, req:[
-    {contract:"0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", rarity:"common"},   // ON HORSE CLASSIC
-    {contract:"0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", rarity:"epic"},     // SHOOTOUT CLASSIC
-    {contract:"0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", rarity:"legendary"}, // ON HORSE MIDNIGHT
-    {contract:"0xe37eabab0a20590626997305ccc1e3d7b5ba4db3", rarity:"exotic"}    // SHOOTOUT MIDNIGHT
-  ]},
-  {cat:"Spawn", name:"CY-GOR SET", xp:20, req:[
-    {contract:"0x00c0461804ffcca9db1bc9ffdb5050631f57c8e8", rarity:"common"}, // SILVER ARMOR
-    {contract:"0x00c0461804ffcca9db1bc9ffdb5050631f57c8e8", rarity:"epic"}   // GOLD ARMOR
-  ]},
-  {cat:"Spawn", name:"THE VIOLATOR SET", xp:20, req:[
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"common"},   // THE VIOLATOR
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"epic"},     // BLOODY VIOLATOR
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"legendary"} // CLOWN MORPH
-  ]},
-  {cat:"Spawn", name:"THE VIOLATOR SUPER SET", xp:35, req:[
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"common"},   // THE VIOLATOR
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"epic"},     // BLOODY VIOLATOR
-    {contract:"0xb0aac1c34a3763c24fcab85c3eac86311b3ccfef", rarity:"legendary"}, // CLOWN MORPH
-    {contract:"0x227af9b628d578486a6d0f69b36d1de2d0ca900b", rarity:"exotic"}    // NECROPLASM
-  ]},
-  {cat:"Spawn", name:"SHE-SPAWN SET", xp:20, req:[
-    {contract:"0xcdce27f3e506dab51ac1966b73000962375b61a3", rarity:"common"},   // RED MASK
-    {contract:"0xcdce27f3e506dab51ac1966b73000962375b61a3", rarity:"epic"},     // BLACK MASK
-    {contract:"0xcdce27f3e506dab51ac1966b73000962375b61a3", rarity:"legendary"} // BLACK ARMOR
-  ]},
-  {cat:"Spawn", name:"WINGS OF REDEMPTION SET", xp:40, req:[
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"common"},   // WINGS OF REDEMPTION
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"epic"},     // BLACK
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"legendary"} // SILVER
-  ]},
-  {cat:"Spawn", name:"WINGS OF REDEMPTION SUPER SET", xp:55, req:[
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"common"},   // WINGS OF REDEMPTION
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"epic"},     // BLACK
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"legendary"}, // SILVER
-    {contract:"0xa128b86ffc30b3807325bb4c88f8cf61758c3eb3", rarity:"exotic"}    // GOLD
-  ]},
-  {cat:"Spawn", name:"SPAWN 95 SET", xp:40, req:[
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"common"},   // SPAWN 95
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"epic"},     // WITHOUT CAPE
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"legendary"} // NECROPLASM WITH CAPE
-  ]},
-  {cat:"Spawn", name:"SPAWN 95 SUPER SET", xp:55, req:[
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"common"},   // SPAWN 95
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"epic"},     // WITHOUT CAPE
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"legendary"}, // NECROPLASM WITH CAPE
-    {contract:"0x81dc41d9c1c3b515dc367430497397b3e162ad2c", rarity:"exotic"}    // NECROPLASM NO CAPE
-  ]},
-  {cat:"Spawn", name:"SPAWN 311 SET", xp:20, req:[
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"common"},   // SPAWN 311
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"epic"},     // NO CAPE
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"legendary"} // PURPLE
-  ]},
-  {cat:"Spawn", name:"SPAWN 311 SUPER SET", xp:35, req:[
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"common"},   // SPAWN 311
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"epic"},     // NO CAPE
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"legendary"}, // PURPLE
-    {contract:"0x503ccea5984975f057ce957a1cdca61dbd731405", rarity:"exotic"}    // PURPLE NO CAPE
-  ]},
-  {cat:"Spawn", name:"COMMANDO SPAWN SET", xp:20, req:[
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"common"},   // COMMANDO SPAWN
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"epic"},     // CAMO
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"legendary"}, // STEALTH SUIT
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"exotic"}    // NECROPLASM
-  ]},
-  {cat:"Spawn", name:"COMMANDO SPAWN SUPER SET", xp:35, req:[
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"common"},   // COMMANDO SPAWN
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"epic"},     // CAMO
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"legendary"}, // STEALTH SUIT
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"exotic"},    // NECROPLASM
-    {contract:"0x416e40a2a56b89ade4374f48b491df7752daef1e", rarity:"legendary"} // SIGNED
-  ]},
-  {cat:"Spawn", name:"MONOLITH SET", xp:20, req:[
-    {contract:"0x405147e7a29f275187be2b9674ffe7b455075235", rarity:"common"}, // MONOLITH
-    {contract:"0x405147e7a29f275187be2b9674ffe7b455075235", rarity:"epic"}   // BLACK
-  ]},
-  {cat:"Spawn", name:"MONOLITH SUPER SET", xp:35, req:[
-    {contract:"0x405147e7a29f275187be2b9674ffe7b455075235", rarity:"common"},   // MONOLITH
-    {contract:"0x405147e7a29f275187be2b9674ffe7b455075235", rarity:"epic"},     // BLACK
-    {contract:"0x405147e7a29f275187be2b9674ffe7b455075235", rarity:"legendary"} // GREEN
-  ]},
-  {cat:"Spawn", name:"SPAWN BLOOD AXE SET", xp:40, req:[
-    {contract:"0x3e7247dadddaab9917d5acc226e7aede855346ae", rarity:"epic"},     // BLACK
-    {contract:"0x3e7247dadddaab9917d5acc226e7aede855346ae", rarity:"legendary"} // MOUNTED
-  ]},
-  {cat:"Spawn", name:"SPAWN BLOOD AXE SUPER SET", xp:50, req:[
-    {contract:"0x3e7247dadddaab9917d5acc226e7aede855346ae", rarity:"epic"},     // BLACK
-    {contract:"0x3e7247dadddaab9917d5acc226e7aede855346ae", rarity:"legendary"}, // MOUNTED
-    {contract:"0x3e7247dadddaab9917d5acc226e7aede855346ae", rarity:"exotic"}    // FIRE MANE
-  ]},
-
-  // New McFarlane Dragon Sets
-  {cat:"McFarlane Dragon", name:"ETERNAL DRAGON CLAN SET", xp:20, req:[
-    {contract:"0x6dc606389aa3532ae50b4af4066ca8bfc984f964", rarity:"common"},   // BLUE
-    {contract:"0x6dc606389aa3532ae50b4af4066ca8bfc984f964", rarity:"common"},   // GREEN
-    {contract:"0x6dc606389aa3532ae50b4af4066ca8bfc984f964", rarity:"epic"},     // BROWN
-    {contract:"0x6dc606389aa3532ae50b4af4066ca8bfc984f964", rarity:"epic"}      // PURPLE
-  ]},
-  {cat:"McFarlane Dragon", name:"KOMODO DRAGON CLAN SET", xp:20, req:[
-    {contract:"0x4e4c5fcc39f6ff90a6e1862b354703c683bd07c5", rarity:"common"},   // BLUE
-    {contract:"0x4e4c5fcc39f6ff90a6e1862b354703c683bd07c5", rarity:"epic"},     // RED
-    {contract:"0x4e4c5fcc39f6ff90a6e1862b354703c683bd07c5", rarity:"epic"}      // GREEN
-  ]},
-  {cat:"McFarlane Dragon", name:"BERSERKER DRAGON CLAN SET", xp:20, req:[
-    {contract:"0xf5f164771bfd542aa608141922a91383f7196992", rarity:"common"},   // BLUE
-    {contract:"0xf5f164771bfd542aa608141922a91383f7196992", rarity:"epic"},     // BROWN
-    {contract:"0xf5f164771bfd542aa608141922a91383f7196992", rarity:"epic"},     // GREEN
-    {contract:"0xf5f164771bfd542aa608141922a91383f7196992", rarity:"legendary"} // RED
-  ]},
-  {cat:"McFarlane Dragon", name:"GOLD DRAGON GIFT SET", xp:35, req:[
-    {contract:"0x10cddef1c416f3462b4f6a8ad7255adc1350339d", rarity:"legendary"}, // GOLD KOMODO
-    {contract:"0xfb56b2ce3bd8722952b2ef9d0e9dfcb8bc1c9eaa", rarity:"legendary"} // GOLD ETERNAL
-  ]},
-
-  // New NBC/Universal Sets
-  {cat:"NBC/Universal", name:"NBC UNIVERSAL WAVE 1", xp:55, req:[
-    {contract:"0x6631a60056f02aa68015557ffbbc683d78987e79", rarity:"epic"},     // ANDY STITZER
-    {contract:"0x50ed79948a280f38d11b5134295fb8064778cdbf", rarity:"epic"},     // THE DUDE
-    {contract:"0x1a1ffebb38d7763d897c7f265c1afe48b41843b6", rarity:"epic"}      // DAVE WOODERSON
-  ]},
-  {cat:"NBC/Universal", name:"NBC UNIVERSAL SUPER SET", xp:55, req:[
-    {contract:"0x6631a60056f02aa68015557ffbbc683d78987e79", rarity:"epic"},     // ANDY STITZER
-    {contract:"0x50ed79948a280f38d11b5134295fb8064778cdbf", rarity:"epic"},     // THE DUDE
-    {contract:"0x1a1ffebb38d7763d897c7f265c1afe48b41843b6", rarity:"epic"},     // DAVE WOODERSON
-    {contract:"0xc50692526a8c2c2798a8434dd620616b26ec6d37", rarity:"legendary"} // SHREK
-  ]},
-  {cat:"NBC/Universal", name:"NBC UNIVERSAL WAVE 2 SET", xp:55, req:[
-    {contract:"0x8732dbd44da56c7a4694bdecbc9dae4436c9b284", rarity:"epic"},     // KEVIN MALONE
-    {contract:"0x98cbf6d430f1038ecbcc847dda4ea54ace8290a9", rarity:"epic"},     // TONY MONTANA
-    {contract:"0xb8a7187428235f26a9f43dea17126737cb925511", rarity:"epic"}      // PO
-  ]},
-
-  // New UFC Sets
-    {cat:"UFC", name:"WAVE 1 UFC SET", xp:40, req:[
-    {contract:"0x125ca8cfece0a950dd33cc7c9d4e132f72dc545a", rarity:"common"},   // JON JONES BLACK SHORTS
-    {contract:"0x49e85cf230477fbb438d6b800e8b4d9260a34f06", rarity:"common"},   // SEAN O’MALLEY GREEN SHORTS
-    {contract:"0x44637ccc451be5e60183207596f722ce64b1fb7e", rarity:"epic"},     // ISRAEL ADESANYA RED/GOLD CHAMPION SHORTS
-    {contract:"0x8bc163742f67a4ceba6babcce6f3610b7927ce0a", rarity:"common"}    // CONOR MCGREGOR GREEN SHORTS
-  ]},
-  {cat:"UFC", name:"WAVE 1 UFC SUPER SET", xp:55, req:[
-    {contract:"0x125ca8cfece0a950dd33cc7c9d4e132f72dc545a", rarity:"epic"},     // JON JONES RED SHORTS
-    {contract:"0x49e85cf230477fbb438d6b800e8b4d9260a34f06", rarity:"legendary"}, // SEAN O’MALLEY PINK CHAMPION SHORTS
-    {contract:"0x44637ccc451be5e60183207596f722ce64b1fb7e", rarity:"legendary"}, // ISRAEL ADESANYA BLACK/GOLD CHAMPION SHORTS
-    {contract:"0x8bc163742f67a4ceba6babcce6f3610b7927ce0a", rarity:"epic"}      // CONOR MCGREGOR WHITE SHORTS
-  ]},
-  {cat:"UFC", name:"WAVE 2 UFC SET", xp:40, req:[
-    {contract:"0x9c3d258be359b70b9c3fc0fece97cfb172c3fa13", rarity:"common"},   // PADDY PIMBLETT WHITE SHORTS
-    {contract:"0xcbb05c528969a6afe1a4c0fd6a08280fd3bd46a2", rarity:"common"}    // JUSTIN GAETHJE BLACK SHORTS
-  ]},
-  {cat:"UFC", name:"WAVE 2 UFC SUPER SET", xp:55, req:[
-    {contract:"0x9c3d258be359b70b9c3fc0fece97cfb172c3fa13", rarity:"common"},   // PADDY PIMBLETT WHITE SHORTS
-    {contract:"0x9c3d258be359b70b9c3fc0fece97cfb172c3fa13", rarity:"epic"},     // PADDY PIMBLETT RED SHORTS
-    {contract:"0xcbb05c528969a6afe1a4c0fd6a08280fd3bd46a2", rarity:"common"},   // JUSTIN GAETHJE BLACK SHORTS
-    {contract:"0xcbb05c528969a6afe1a4c0fd6a08280fd3bd46a2", rarity:"epic"}      // JUSTIN GAETHJE BLUE SHORTS
-  ]}
+    {contract:"0xdab073c72ccaea3d5a6571cf1dd98cfa77f01b05", rarity:"legendary"},
+    {contract:"0x186b4d896d3be406ba4868541f866eb58ad6373e", rarity:"legendary"},
+    {contract:"0xa3ff7a4c4aa5369b73447e71ab3ac6dda69af07f", rarity:"legendary"}
+  ]},
+  {cat:"DC", name:"WAVE 4 DR FATE B.A.F SET 40", xp:40, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"common"},
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"epic"},
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"legendary"}
+]},
+{cat:"DC", name:"WAVE 4 SUPERMAN SILVER AGE B.A.F SET 40", xp:40, req:[
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"common"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"epic"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"legendary"}
+]},
+{cat:"DC", name:"WAVE 4 TWO-FACE SILVER AGE SET 40", xp:40, req:[
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"common"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"epic"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"legendary"}
+]},
+{cat:"DC", name:"WAVE 4 COMMON B.A.F SET 40", xp:40, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"common"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"common"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"common"}
+]},
+{cat:"DC", name:"WAVE 4 EPIC B.A.F SET 40", xp:40, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"epic"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"epic"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"epic"}
+]},
+{cat:"DC", name:"WAVE 4 LEGENDARY B.A.F SET 55", xp:55, req:[
+  {contract:"0x636045ab763b493a80350bfbd08e038029056ae2", rarity:"legendary"},
+  {contract:"0xb817501dbcdc39c87d7afab91f41eb3608f312be", rarity:"legendary"},
+  {contract:"0x89696ef507b55741dc311733b7658fba5c8eea91", rarity:"legendary"}
+]}
 ];
 
 // derive requiredContracts from SETS for permissive filtering
