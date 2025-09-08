@@ -242,18 +242,42 @@ const API_KEY = localStorage.getItem('rarible_api_key') || "";
 const headers = { 'X-API-KEY': API_KEY };
 
 function pickPreview(meta){
-  if (!meta || !meta.content || !meta.content.length) return null;
-  const types=["PREVIEW","PORTRAIT","BIG","ORIGINAL"];
-  for (const rep of types){
-    const c = meta.content.find(x => x.representation===rep && x['@type']==='IMAGE' && x.url);
-    if (c) return c.url;
+  if (!meta) return null;
+
+  // 1) Rarible 'content' array (zoals eerst)
+  if (Array.isArray(meta.content) && meta.content.length){
+    const types=["PREVIEW","PORTRAIT","BIG","ORIGINAL"];
+    for (const rep of types){
+      const c = meta.content.find(x =>
+        x && x.url &&
+        (x.representation===rep || !x.representation) &&
+        (/image/i.test(x['@type']||'') || /image/.test(x.mimeType||''))
+      );
+      if (c) return c.url;
+    }
+    const any = meta.content.find(x => x && x.url);
+    if (any) return any.url;
   }
-  const any = meta.content.find(x => x.url);
-  return any ? any.url : null;
+
+  // 2) Gangbare single-field fallbacks (zoals results gebruikt)
+  const candidates = [
+    meta.image, meta.image_url, meta.imageUrl,
+    meta.imageUri, meta.imageURI, meta.thumbnail,
+    meta.preview_image_url, meta.external_image_url
+  ];
+  for (const u of candidates){
+    if (typeof u === 'string' && u.trim()) return u.trim();
+  }
+
+  // 3) Laatste redmiddel: zoek eerste image-URL diep in de metadata
+  try{
+    const s = JSON.stringify(meta);
+    const m = s.match(/https?:\/\/[^"\s\\]+?\.(png|jpg|jpeg|webp|gif)/i);
+    if (m) return m[0];
+  }catch(e){}
+
+  return null;
 }
-function tokenLink(itemId){ const p=String(itemId).split(':'); if(p.length<3) return '#'; return `https://rarible.com/token/polygon/${p[1]}:${p.slice(2).join(':')}`; }
-async function fetchJson(u){ const res=await fetch(u,{headers}); const t=await res.text(); let d; try{d=JSON.parse(t)}catch{d=t}; if(!res.ok) throw new Error(`HTTP ${res.status}: ${(d&&d.message)||t||res.statusText}`); return d; }
-async function fetchAllByOwner(owner){ const items=[]; try{ let cont; do{ const u=new URL('https://api.rarible.org/v0.1/items/byOwner'); u.searchParams.set('owner', `${OWNER_GROUP}:${owner}`); u.searchParams.set('blockchains','POLYGON'); u.searchParams.set('size','100'); if(cont) u.searchParams.set('continuation',cont); const d=await fetchJson(u); if(Array.isArray(d.items)) items.push(...d.items); cont=d.continuation||null; }while(cont); return items; }catch(e){} let cont; do{ const u=new URL('https://polygon-api.rarible.org/v0.1/nft/items/byOwner'); u.searchParams.set('owner', owner); u.searchParams.set('size','100'); if(cont) u.searchParams.set('continuation', cont); const d=await fetchJson(u); if(Array.isArray(d.items)) items.push(...d.items); cont=d.continuation||null; }while(cont); return items; }
 
 // rarity helpers
 function normalizeRarityValue(v){
